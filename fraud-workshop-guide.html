@@ -293,6 +293,8 @@
       <li><a href="#s6"><span class="n">6</span><span><span class="full">Publish an endpoint</span><span class="short">6 Endpoint</span></span></a></li>
       <li><a href="#s7"><span class="n">7</span><span><span class="full">Deploy the app</span><span class="short">7 App</span></span></a></li>
       <li><a href="#s8"><span class="n">8</span><span><span class="full">Check the real model answers</span><span class="short">8 Check</span></span></a></li>
+      <li><a href="#s9"><span class="n">9</span><span><span class="full">Deploy the two open models</span><span class="short">9 Open models</span></span></a></li>
+      <li><a href="#s10"><span class="n">10</span><span><span class="full">Review the models and traces</span><span class="short">10 Review</span></span></a></li>
       <li><a href="#help"><span class="n">?</span><span><span class="full">If something fails</span><span class="short">Help</span></span></a></li>
     </ol>
     <div class="progress" aria-live="polite">
@@ -305,7 +307,7 @@
   <main>
     <p class="eyebrow">Hands-on workshop</p>
     <h1>Fraud Detection Workshop</h1>
-    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Every step is done in the Domino web interface, in a Domino-hosted project.</p>
+    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Then add two open-source LLM agents on a GPU: one that simulates transactions from a chat, and one fine-tuned to score them for fraud. Every step is done in the Domino web interface, in a Domino-hosted project.</p>
 
     <dl class="glance">
       <div><dt>Transactions</dt><dd>78,324<small>77,210 after cleaning</small></dd></div>
@@ -328,6 +330,8 @@
           <tr><td class="num">6</td><td>Publish that version as a model endpoint</td><td>A REST URL and an access token</td></tr>
           <tr><td class="num">7</td><td>Set two variables, then publish the Streamlit app</td><td>A web page that scores a transaction</td></tr>
           <tr><td class="num">8</td><td>Submit a transaction and confirm the answer came from the model</td><td>An end-to-end result</td></tr>
+          <tr><td class="num">9</td><td>Fine-tune a fraud LLM as a GPU Job, then redeploy the app on a GPU with the second tab</td><td>Two open models serving an <b>Agent</b> tab next to the <b>Trad ML Model</b> tab</td></tr>
+          <tr><td class="num">10</td><td>Read the fine-tuning run in Experiments and the agent traces</td><td>Predictor performance and chat-agent behaviour, side by side</td></tr>
         </tbody>
       </table>
     </div>
@@ -571,6 +575,85 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
       <div class="callout warn"><b>How to recognize the fallback</b><p>The fallback counts how many of six simple rules a transaction trips (amount over 500, merchant risk above 1, device trust below −1, IP reputation below −1, distance above 2, and a night-time hour) and divides by six. Its only possible values are 0.00, 0.17, 0.33, 0.50, 0.67, 0.83 and 1.00.</p><p>The "ADA Boost" and "GaussianNB" choices use the fallback unless you published endpoints for those models and set their variables.</p></div>
     </section>
 
+
+    <!-- ============ STEP 9 ============ -->
+    <section class="step" id="s9">
+      <div class="step-h"><span class="num">9</span><h2>Deploy the two open models</h2></div>
+      <p class="goal">Add an <b>Agent</b> tab to the same app. Two open models from Hugging Face run on one GPU: a chat agent that simulates transactions, and a fraud-scoring agent that you fine-tune on this workshop's data.</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Agent</th><th>Open model</th><th>Role</th></tr></thead>
+          <tbody>
+            <tr><td>Transaction generator</td><td><code>Qwen/Qwen2.5-7B-Instruct</code></td><td>Chat with it; it calls a simulator tool to create a batch of transactions that matches what you ask for. Chosen for reliable tool calling at a size that fits one GPU.</td></tr>
+            <tr><td>Fraud scorer</td><td><code>Qwen/Qwen2.5-1.5B-Instruct</code>, LoRA fine-tuned</td><td>Reads one transaction as text and returns a fraud probability from its next-token probabilities. Small enough to tune in minutes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU with at least 40 GB of memory (for example an A100 40 GB or an L40S 48 GB). Ask your administrator which GPU hardware tier your deployment offers. On a 24 GB card the 7B model does not leave room for the second model.</p></div>
+
+      <h3>9a. Create the GPU environment</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Create a second environment named <code>Fraud-Detection-LLM</code>.</b> Start from a GPU-enabled Domino Standard Environment for Python 3.12, paste the block below into its Dockerfile instructions, and build it. Keep the step 1 instructions too, because the app still needs the same packages.</span></label>
+          <div class="code"><span class="lbl">Dockerfile instructions (add to the step 1 instructions)</span><pre><code>USER root
+RUN pip install --no-cache-dir "setuptools&lt;81" streamlit st-pages streamlit-extras openai \
+    vllm transformers peft accelerate scikit-learn pandas mlflow==3.2.0
+USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+      </ul>
+
+      <h3>9b. Fine-tune the fraud model</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-9-2"><span><b>Upload the new code and sync.</b> The updated code zip adds <code>exercises/f_OpenModelAgents/</code>, a new <code>app.sh</code> line and a Trad ML tab module. Unzip it in a workspace terminal as in step 1, then sync your files.</span></label>
+          <div class="code"><pre><code>unzip -o fraud-workshop-code.zip</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-9-3"><span><b>Run the fine-tuning Job.</b> Choose Run Job, the <code>Fraud-Detection-LLM</code> environment and your GPU hardware tier, and enter this command.</span></label>
+          <div class="code"><pre><code>python exercises/f_OpenModelAgents/finetune_fraud_llm.py</code></pre><button class="copy" type="button">Copy</button></div>
+          <div class="sub"><p>It downloads the base model into the project dataset, trains a LoRA adapter on 20,000 labelled transactions, scores 2,000 held-out ones, and saves the merged model to <code>models/fraud-llm</code> in the dataset. Expect on the order of 10 to 20 minutes. The log ends with "Fine-tuning completed successfully" and a block of metrics.</p></div>
+        </li>
+      </ul>
+
+      <h3>9c. Redeploy the app on the GPU</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-9-4"><span><b>Republish the app from <code>app.sh</code> on the GPU.</b> Open the app from step 7, change its environment to <code>Fraud-Detection-LLM</code> and its hardware to the GPU tier, and restart it. Nothing else changes: it is still <b>App from File</b> with <code>app.sh</code>.</span></label>
+          <div class="sub"><p><code>app.sh</code> now first runs <code>serve_llms.sh</code>, which starts the two models as local servers (generator on port 8000, fraud model on 8001), then starts Streamlit as before. The first start downloads the 7B model, so allow several minutes. If the hardware has no GPU, the servers are skipped and the Trad ML tab still works.</p></div>
+        </li>
+        <li><label class="t"><input type="checkbox" id="c-9-5"><span><b>Open the app and check there are two tabs:</b> <b>Trad ML Model</b> (the step 7 page, unchanged) and <b>Agent</b>.</span></label></li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-9-6"><span><b>Generate transactions.</b> In the Agent tab, ask the chat agent for a batch, for example the request below. A table of transactions appears on the right.</span></label>
+          <div class="code"><pre><code>Make 80 transactions, about 25% fraud, mostly late-night online electronics purchases far from the cardholder's home.</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li><label class="t"><input type="checkbox" id="c-9-7"><span><b>Score them.</b> Choose Score with fraud agent. Each row gets a <code>fraud_score</code> between 0 and 1; move the slider to change what counts as flagged. The page also shows how many of the transactions the generator meant to be fraud were caught.</span></label></li>
+      </ul>
+      <div class="callout ok"><b>What is real and what is not</b><p>The generator's <code>is_fraud_intent</code> column is what the simulator was asked to create, not ground truth. The fraud model was tuned on the workshop's labelled data, so agreement on simulated rows shows the pipeline working, not a validated fraud rate.</p></div>
+    </section>
+
+    <!-- ============ STEP 10 ============ -->
+    <section class="step" id="s10">
+      <div class="step-h"><span class="num">10</span><h2>Review the models and traces</h2></div>
+      <p class="goal">The predictor is judged by its metrics in Experiments. The chat agent is judged by its traces, which show each model call and tool call.</p>
+
+      <h3>10a. Predictor performance</h3>
+      <ul class="tasks">
+        <li><label class="t"><input type="checkbox" id="c-10-1"><span><b>Open Experiments</b> and find "CC Fraud LLM Fine-tuning…". Open the run named <code>Qwen2.5-LoRA</code>.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-2"><span><b>Read the metrics.</b> <code>base_roc_auc</code> is the untuned model; <code>roc_auc</code> is after fine-tuning on the same held-out rows. The gap is what fine-tuning bought. <code>f1_fraud</code>, <code>precision_fraud</code>, <code>recall_fraud</code> and <code>tau_best_f1</code> mean the same as in step 4.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-3"><span><b>Compare with XGBoost.</b> Open the "CC Fraud Classifier Training…" experiment and compare its <code>roc_auc</code> and <code>f1_fraud</code> with the LLM run. A tabular model is often as good or better; the point is to see both on the same data.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-4"><span><b>Open the run's Artifacts</b> for the LoRA adapter and <code>eval_scores.csv</code> (true label and predicted probability for every held-out row).</span></label></li>
+      </ul>
+
+      <h3>10b. Chat-agent traces</h3>
+      <ul class="tasks">
+        <li><label class="t"><input type="checkbox" id="c-10-5"><span><b>Use the Agent tab first.</b> Send at least two different requests so there is something to look at.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-6"><span><b>Find the traces.</b> Open the app's experiment (or Experiments, then the app's traces view, depending on your Domino version) and open a trace named <code>transaction_generator_agent</code>.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-7"><span><b>Expand it.</b> You should see the model call with your request, the <code>generate_transactions</code> tool call with the arguments the model chose (count, fraud rate, scenario), the tool result, and the final answer. Compare the arguments with what you asked for.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-8"><span><b>Check latency.</b> Note the time of each span, then open a <code>fraud_scoring_agent</code> trace, which records the batch size and flag rate.</span></label></li>
+      </ul>
+    </section>
+
     <!-- ============ HELP ============ -->
     <section class="step" id="help">
       <div class="step-h"><h2>If something fails</h2></div>
@@ -585,6 +668,9 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
             <tr><td>Endpoint logs show <code>no app loaded. GAME OVER</code></td><td>Missing Python 3.12 fix in the environment</td><td>Add the last Dockerfile block from step 1, rebuild, republish</td></tr>
             <tr><td>App shows "Classifier Connection Error: Invalid URL 'None'"</td><td>The endpoint variables are not set, or are misspelled</td><td>Check both names in project Settings, then restart the app</td></tr>
             <tr><td>App shows "Classifier API Error: 401"</td><td>Wrong token</td><td>Copy the token again; it is used for both username and password</td></tr>
+            <tr><td>Agent tab says "Could not reach the generator model"</td><td>The GPU servers are not up yet, or the app is on a CPU tier or the wrong environment</td><td>Check the app is on the GPU tier with <code>Fraud-Detection-LLM</code>; wait for the 7B download, and read <code>/tmp/llm-logs/generator.log</code> in the app logs</td></tr>
+            <tr><td>Agent tab says "Could not reach the fraud model"</td><td>The fine-tuning Job has not finished, so <code>models/fraud-llm</code> does not exist</td><td>Finish step 9b, then restart the app</td></tr>
+            <tr><td>vLLM log shows an out-of-memory error</td><td>GPU has less than 40 GB</td><td>Use a larger GPU tier, or lower <code>GEN_GPU_MEM</code> and use a smaller <code>GENERATOR_MODEL</code> such as <code>Qwen/Qwen2.5-3B-Instruct</code></td></tr>
           </tbody>
         </table>
       </div>
