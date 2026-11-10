@@ -591,15 +591,14 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
         </table>
       </div>
       <div class="callout ok"><b>Model provenance</b><p>Both models are IBM Granite 3.3 (IBM is a US company), released under the Apache 2.0 license and not gated, so they can be mirrored into an air-gapped registry. Models from China-based labs were deliberately excluded for DoD-sensitive deployments. Quality is somewhat lower than the best open models. Confirm with your own approval process before using any model in a DoD environment, since this guide does not certify a model as approved.</p></div>
-      <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU with at least 40 GB of memory (for example an A100 40 GB or an L40S 48 GB). Ask your administrator which GPU hardware tier your deployment offers. On a 24 GB card the 7B model does not leave room for the second model.</p></div>
+      <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU. On a card with 40 GB or more (for example an L40S 48 GB) the generator runs in full precision. On a 24 GB card <code>serve_llms.sh</code> detects the size and loads the generator in 8-bit (FP8) so both models fit, at a small cost in quality. Ask your administrator which GPU hardware tier your deployment offers; GPU tiers can sit in <b>Pending</b> for a long time if the cluster has no free GPU node.</p></div>
 
       <h3>9a. Create the GPU environment</h3>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Create a second environment named <code>Fraud-Detection-LLM</code>.</b> Start from a GPU-enabled Domino Standard Environment for Python 3.12, paste the block below into its Dockerfile instructions, and build it. Keep the step 1 instructions too, because the app still needs the same packages.</span></label>
-          <div class="code"><span class="lbl">Dockerfile instructions (add to the step 1 instructions)</span><pre><code>USER root
-RUN pip install --no-cache-dir "setuptools&lt;81" streamlit st-pages streamlit-extras openai \
-    vllm transformers peft accelerate scikit-learn pandas mlflow==3.2.0
+          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Create a second environment named <code>Fraud-Detection-LLM</code>.</b> Base it on your <code>Fraud-Detection-Workshop</code> environment (so it already has the step 1 packages), paste the block below into its Dockerfile instructions, and build it. The build downloads several GB, so allow about 10 minutes.</span></label>
+          <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
+RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
 USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
       </ul>
@@ -613,7 +612,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
         <li>
           <label class="t"><input type="checkbox" id="c-9-3"><span><b>Run the fine-tuning Job.</b> Choose Run Job, the <code>Fraud-Detection-LLM</code> environment and your GPU hardware tier, and enter this command.</span></label>
           <div class="code"><pre><code>python exercises/f_OpenModelAgents/finetune_fraud_llm.py</code></pre><button class="copy" type="button">Copy</button></div>
-          <div class="sub"><p>It downloads the base model into the project dataset, trains a LoRA adapter on 20,000 labelled transactions, scores 2,000 held-out ones, and saves the merged model to <code>models/fraud-llm</code> in the dataset. Expect on the order of 10 to 20 minutes. The log ends with "Fine-tuning completed successfully" and a block of metrics.</p></div>
+          <div class="sub"><p>It downloads the base model into the project dataset, trains a LoRA adapter on 20,000 labelled transactions, scores 2,000 held-out ones, and saves the merged model to <code>models/fraud-llm</code> in the dataset. On a 24 GB GPU it took about 25 minutes, including a few minutes to download the model. The log ends with "Fine-tuning completed successfully" and a block of metrics.</p></div>
         </li>
       </ul>
 
@@ -630,6 +629,8 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li><label class="t"><input type="checkbox" id="c-9-7"><span><b>Score them.</b> Choose Score with fraud agent. Each row gets a <code>fraud_score</code> between 0 and 1; move the slider to change what counts as flagged. The page also shows how many of the transactions the generator meant to be fraud were caught.</span></label></li>
       </ul>
+      <div class="callout ok"><b>What we saw in testing</b><p>On a 24 GB GPU the first start took about 8 minutes because the app downloads the 7B model; later starts were faster because the weights are cached in the project dataset. The app log prints a <code>SMOKE</code> and <code>E2E</code> check once both models are up. Asking for 40 transactions at 30% fraud produced exactly that, and the fraud agent ranked the simulator's intended fraud above the rest with a ROC AUC of about 0.95. At the default 0.5 cutoff it flagged most of that small batch, so raise the slider if you want fewer flags.</p></div>
+      <div class="callout warn"><b>Generator quality</b><p>This open 8B model sometimes writes the tool call as code instead of calling the tool. The agent detects that and retries once with the call forced. If the generator still replies with text and no table, rephrase the request more concretely (count, fraud share, and a scenario).</p></div>
       <div class="callout ok"><b>What is real and what is not</b><p>The generator's <code>is_fraud_intent</code> column is what the simulator was asked to create, not ground truth. The fraud model was tuned on the workshop's labelled data, so agreement on simulated rows shows the pipeline working, not a validated fraud rate.</p></div>
     </section>
 
@@ -641,7 +642,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
       <h3>10a. Predictor performance</h3>
       <ul class="tasks">
         <li><label class="t"><input type="checkbox" id="c-10-1"><span><b>Open Experiments</b> and find "CC Fraud LLM Fine-tuning…". Open the run named <code>Granite-LoRA</code>.</span></label></li>
-        <li><label class="t"><input type="checkbox" id="c-10-2"><span><b>Read the metrics.</b> <code>base_roc_auc</code> is the untuned model; <code>roc_auc</code> is after fine-tuning on the same held-out rows. The gap is what fine-tuning bought. <code>f1_fraud</code>, <code>precision_fraud</code>, <code>recall_fraud</code> and <code>tau_best_f1</code> mean the same as in step 4.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-2"><span><b>Read the metrics.</b> <code>base_roc_auc</code> is the untuned model; <code>roc_auc</code> is after fine-tuning on the same held-out rows. The gap is what fine-tuning bought. In our test run the untuned model scored about 0.53 (a coin flip) and the tuned model about 0.93, with <code>f1_fraud</code> about 0.82 and <code>accuracy</code> about 0.85 on 2,000 held-out transactions. <code>f1_fraud</code>, <code>precision_fraud</code>, <code>recall_fraud</code> and <code>tau_best_f1</code> mean the same as in step 4.</span></label></li>
         <li><label class="t"><input type="checkbox" id="c-10-3"><span><b>Compare with XGBoost.</b> Open the "CC Fraud Classifier Training…" experiment and compare its <code>roc_auc</code> and <code>f1_fraud</code> with the LLM run. A tabular model is often as good or better; the point is to see both on the same data.</span></label></li>
         <li><label class="t"><input type="checkbox" id="c-10-4"><span><b>Open the run's Artifacts</b> for the LoRA adapter and <code>eval_scores.csv</code> (true label and predicted probability for every held-out row).</span></label></li>
       </ul>
