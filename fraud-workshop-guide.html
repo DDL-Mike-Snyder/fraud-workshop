@@ -585,11 +585,12 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
         <table>
           <thead><tr><th>Agent</th><th>Open model</th><th>Role</th></tr></thead>
           <tbody>
-            <tr><td>Transaction generator</td><td><code>Qwen/Qwen2.5-7B-Instruct</code></td><td>Chat with it; it calls a simulator tool to create a batch of transactions that matches what you ask for. Chosen for reliable tool calling at a size that fits one GPU.</td></tr>
-            <tr><td>Fraud scorer</td><td><code>Qwen/Qwen2.5-1.5B-Instruct</code>, LoRA fine-tuned</td><td>Reads one transaction as text and returns a fraud probability from its next-token probabilities. Small enough to tune in minutes.</td></tr>
+            <tr><td>Transaction generator</td><td><code>ibm-granite/granite-3.3-8b-instruct</code></td><td>Chat with it; it calls a simulator tool to create a batch of transactions that matches what you ask for. Chosen for native tool calling at a size that fits one GPU.</td></tr>
+            <tr><td>Fraud scorer</td><td><code>ibm-granite/granite-3.3-2b-instruct</code>, LoRA fine-tuned</td><td>Reads one transaction as text and returns a fraud probability from its next-token probabilities. Small enough to tune in minutes.</td></tr>
           </tbody>
         </table>
       </div>
+      <div class="callout ok"><b>Model provenance</b><p>Both models are IBM Granite 3.3 (IBM is a US company), released under the Apache 2.0 license and not gated, so they can be mirrored into an air-gapped registry. Models from China-based labs were deliberately excluded for DoD-sensitive deployments. Quality is somewhat lower than the best open models. Confirm with your own approval process before using any model in a DoD environment, since this guide does not certify a model as approved.</p></div>
       <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU with at least 40 GB of memory (for example an A100 40 GB or an L40S 48 GB). Ask your administrator which GPU hardware tier your deployment offers. On a 24 GB card the 7B model does not leave room for the second model.</p></div>
 
       <h3>9a. Create the GPU environment</h3>
@@ -639,7 +640,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
 
       <h3>10a. Predictor performance</h3>
       <ul class="tasks">
-        <li><label class="t"><input type="checkbox" id="c-10-1"><span><b>Open Experiments</b> and find "CC Fraud LLM Fine-tuning…". Open the run named <code>Qwen2.5-LoRA</code>.</span></label></li>
+        <li><label class="t"><input type="checkbox" id="c-10-1"><span><b>Open Experiments</b> and find "CC Fraud LLM Fine-tuning…". Open the run named <code>Granite-LoRA</code>.</span></label></li>
         <li><label class="t"><input type="checkbox" id="c-10-2"><span><b>Read the metrics.</b> <code>base_roc_auc</code> is the untuned model; <code>roc_auc</code> is after fine-tuning on the same held-out rows. The gap is what fine-tuning bought. <code>f1_fraud</code>, <code>precision_fraud</code>, <code>recall_fraud</code> and <code>tau_best_f1</code> mean the same as in step 4.</span></label></li>
         <li><label class="t"><input type="checkbox" id="c-10-3"><span><b>Compare with XGBoost.</b> Open the "CC Fraud Classifier Training…" experiment and compare its <code>roc_auc</code> and <code>f1_fraud</code> with the LLM run. A tabular model is often as good or better; the point is to see both on the same data.</span></label></li>
         <li><label class="t"><input type="checkbox" id="c-10-4"><span><b>Open the run's Artifacts</b> for the LoRA adapter and <code>eval_scores.csv</code> (true label and predicted probability for every held-out row).</span></label></li>
@@ -670,7 +671,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
             <tr><td>App shows "Classifier API Error: 401"</td><td>Wrong token</td><td>Copy the token again; it is used for both username and password</td></tr>
             <tr><td>Agent tab says "Could not reach the generator model"</td><td>The GPU servers are not up yet, or the app is on a CPU tier or the wrong environment</td><td>Check the app is on the GPU tier with <code>Fraud-Detection-LLM</code>; wait for the 7B download, and read <code>/tmp/llm-logs/generator.log</code> in the app logs</td></tr>
             <tr><td>Agent tab says "Could not reach the fraud model"</td><td>The fine-tuning Job has not finished, so <code>models/fraud-llm</code> does not exist</td><td>Finish step 9b, then restart the app</td></tr>
-            <tr><td>vLLM log shows an out-of-memory error</td><td>GPU has less than 40 GB</td><td>Use a larger GPU tier, or lower <code>GEN_GPU_MEM</code> and use a smaller <code>GENERATOR_MODEL</code> such as <code>Qwen/Qwen2.5-3B-Instruct</code></td></tr>
+            <tr><td>vLLM log shows an out-of-memory error</td><td>GPU has less than 40 GB</td><td>Use a larger GPU tier, or lower <code>GEN_GPU_MEM</code> and use a smaller <code>GENERATOR_MODEL</code> such as <code>Qwen/Granite-3B-Instruct</code></td></tr>
           </tbody>
         </table>
       </div>
