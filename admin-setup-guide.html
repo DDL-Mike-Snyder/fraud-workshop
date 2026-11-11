@@ -233,6 +233,7 @@
     font-size: 13.5px;
     line-height: 1.55;
   }
+  .code pre code { background: none; border: 0; border-radius: 0; padding: 0; font-size: inherit; color: inherit; }
   .code button.copy {
     position: absolute; top: 8px; right: 8px;
     background: transparent; color: var(--code-fg);
@@ -280,6 +281,23 @@
   @media (min-width: 901px) { .index a .short { display: none; } }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar i { transition: none; } }
   .pill { font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: .02em; padding: 2px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; margin-left: 6px; }
+
+  /* ---------- print / PDF ---------- */
+  @page { size: Letter; margin: 0.6in 0.65in; }
+  @media print {
+    :root { color-scheme: light; --bg: #FFFFFF; }
+    html { scroll-behavior: auto; }
+    body { background: #fff; font-size: 11pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .shell { display: block; padding: 0; max-width: none; }
+    .index, .code button.copy, .linkbtn, .progress { display: none; }
+    main { max-width: none; }
+    .step { break-before: auto; padding-top: 22px; margin-top: 22px; }
+    .step-h, h3 { break-after: avoid; }
+    ul.tasks > li, .callout, tr, .glance { break-inside: avoid; }
+    .code pre { white-space: pre-wrap; overflow: visible; overflow-wrap: anywhere; padding-right: 14px; }
+    .tablewrap { overflow: visible; }
+    a { color: inherit; }
+  }
 </style>
 
 <div class="shell">

@@ -8,7 +8,7 @@ trap 'rm -rf "$STAGE"' EXIT
 cd "$ROOT"
 # Everything tracked or new (not ignored), minus the guides, support folder and Git metadata
 git ls-files -co --exclude-standard \
-  | grep -v -E '^(support/|admin-setup-guide\.html|fraud-workshop-guide\.html|README\.md$)' \
+  | grep -v -E '^(support/|admin-setup-guide\.|fraud-workshop-guide\.|README\.md$)' \
   | while read -r f; do mkdir -p "$STAGE/$(dirname "$f")"; cp "$f" "$STAGE/$f"; done
 cp exercises/README.md "$STAGE/README.md"
 rm -f support/fraud-workshop-code.zip
