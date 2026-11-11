@@ -327,7 +327,7 @@
   <main>
     <p class="eyebrow">Hands-on workshop</p>
     <h1>Fraud Detection Workshop</h1>
-    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Then add two open-source LLM agents on a GPU: one that simulates transactions from a chat, and one fine-tuned to score them for fraud. Every step is done in the Domino web interface, in a Domino-hosted project. An administrator prepares the compute environments and hardware tiers beforehand (<a href="admin-setup-guide.html">admin setup guide</a>), so you only select them.</p>
+    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Then add two open-source LLM agents on a GPU: one that simulates transactions from a chat, and one fine-tuned to score them for fraud. Every step is done in the Domino web interface, in a Domino-hosted project. An administrator prepares the compute environments and hardware tiers beforehand (<a href="../admin/admin-setup-guide.html">admin setup guide</a>), so you only select them.</p>
 
     <dl class="glance">
       <div><dt>Transactions</dt><dd>78,324<small>77,210 after cleaning</small></dd></div>
@@ -360,7 +360,7 @@
     <!-- ============ STEP 1 ============ -->
     <section class="step" id="s1">
       <div class="step-h"><span class="num">1</span><h2>Get the project ready</h2></div>
-      <p class="goal">Create your project, get the code and the raw data into it, and select the workshop environment. Your administrator has already built the compute environments and hardware tiers (see the <a href="admin-setup-guide.html">admin setup guide</a>), so you only pick them. You can bring the code in from <b>Git</b> (recommended) or by uploading a zip into a <b>Domino-hosted</b> project. Both end in the same place.</p>
+      <p class="goal">Create your project, get the code and the raw data into it, and select the workshop environment. Your administrator has already built the compute environments and hardware tiers (see the <a href="../admin/admin-setup-guide.html">admin setup guide</a>), so you only pick them. You can bring the code in from <b>Git</b> (recommended) or by uploading a zip into a <b>Domino-hosted</b> project. Both end in the same place.</p>
 
       <div class="tablewrap">
         <table>
@@ -389,7 +389,7 @@
           <label class="t"><input type="checkbox" id="c-1-3"><span><b>Create a project.</b> Open Projects, choose New Project, give it a name and keep the defaults, so the project is hosted in Domino.</span></label>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Upload the code zip.</b> Open the project's Code page and upload <code>fraud-workshop-code.zip</code> to the project root. You will unzip it below.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Upload the code zip.</b> Open the project's Code page and upload <code>fraud-workshop-code.zip</code> to the project root. You will unzip it below. The file is in the <code>user/downloads/</code> folder of the workshop repository, or your instructor can send it to you.</span></label>
         </li>
       </ul>
 
@@ -407,7 +407,7 @@
           <div class="code"><pre><code>unzip -o fraud-workshop-code.zip</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-8"><span><b>Put the raw data in the project's dataset.</b> Open <code>.setup/unzip_dataset.ipynb</code> and run it once. It extracts <code>raw_cc_transactions.csv.gz</code> to the top level of the dataset. With option A it reads the data zip that came with your code in <code>support/</code>. With option B, first open Data, then the project's default Domino Dataset, and upload <code>fraud-workshop-data.zip</code> at the top level, then run the notebook.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-8"><span><b>Put the raw data in the project's dataset.</b> Open <code>.setup/unzip_dataset.ipynb</code> and run it once. It extracts <code>raw_cc_transactions.csv.gz</code> to the top level of the dataset. With option A it reads the data zip that came with your code in <code>user/downloads/</code>. With option B, first open Data, then the project's default Domino Dataset, and upload <code>fraud-workshop-data.zip</code> (also from <code>user/downloads/</code>) at the top level, then run the notebook.</span></label>
           <div class="sub"><p>Inside workspaces and Jobs, the dataset appears at <code>/domino/datasets/local/&lt;your-project-name&gt;/</code> for a Domino-hosted project, and at <code>/domino/datasets/&lt;your-project-name&gt;/&lt;your-username&gt;/</code> for a Git-based one. The scripts work this out for you. Confirm the file is listed on the Data page before moving on.</p></div>
         </li>
         <li>
@@ -623,7 +623,7 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
       <h3>9a. Choose the GPU environment</h3>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Confirm <code>Fraud-Detection-LLM</code> and a GPU hardware tier are available to you.</b> Your administrator builds the environment (it adds vLLM, transformers and PEFT on top of the workshop environment) and provides the GPU tier. Both appear in the pickers when you start a Job or edit the app. If either is missing, see the <a href="admin-setup-guide.html">admin setup guide</a>.</span></label>
+          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Confirm <code>Fraud-Detection-LLM</code> and a GPU hardware tier are available to you.</b> Your administrator builds the environment (it adds vLLM, transformers and PEFT on top of the workshop environment) and provides the GPU tier. Both appear in the pickers when you start a Job or edit the app. If either is missing, see the <a href="../admin/admin-setup-guide.html">admin setup guide</a>.</span></label>
         </li>
       </ul>
 
@@ -683,7 +683,7 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
     <!-- ============ STEP 11 ============ -->
     <section class="step" id="s11">
       <div class="step-h"><span class="num">11</span><h2>Use a code assistant <span class="pill">optional</span></h2></div>
-      <p class="goal">Work on the project's code with an AI assistant inside a VS Code workspace. You can use <b>Cline</b> or <b>Codex</b>. Both already know how to talk to Domino, and you bring your own API key. Your administrator sets up the environment (<a href="admin-setup-guide.html#a4">admin setup guide, step 4</a>).</p>
+      <p class="goal">Work on the project's code with an AI assistant inside a VS Code workspace. You can use <b>Cline</b> or <b>Codex</b>. Both already know how to talk to Domino, and you bring your own API key. Your administrator sets up the environment (<a href="../admin/admin-setup-guide.html#a4">admin setup guide, step 4</a>).</p>
 
       <h3>11a. Open a VS Code workspace</h3>
       <ul class="tasks">

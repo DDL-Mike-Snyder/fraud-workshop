@@ -321,7 +321,7 @@
   <main>
     <p class="eyebrow">For Domino administrators</p>
     <h1>Workshop Admin Setup</h1>
-    <p class="lede">Do this once, before the workshop, with Domino admin rights. It prepares everything that lives in the Admin panel (the two compute environments and the hardware tiers) so participants only select these resources and never build or configure them. Participants then follow the <a href="fraud-workshop-guide.html">workshop guide</a>.</p>
+    <p class="lede">Do this once, before the workshop, with Domino admin rights. It prepares everything that lives in the Admin panel (the two compute environments and the hardware tiers) so participants only select these resources and never build or configure them. Participants then follow the <a href="../user/fraud-workshop-guide.html">workshop guide</a>.</p>
 
     <dl class="glance">
       <div><dt>Environments</dt><dd>3<small>CPU, GPU, code assistant</small></dd></div>
@@ -355,7 +355,7 @@
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-1-2"><span><b>Name it and choose a base.</b> Name it exactly <code>Fraud-Detection-Workshop</code> and start from the Domino Standard Environment for Python 3.12.</span></label>
-          <div class="sub"><p>Participants select it by this name, and the guide refers to it by this name, so do not change the spelling.</p></div>
+          <div class="sub"><p>Participants select it by this name, and the guide refers to it by this name, so do not change the spelling. The same Dockerfile instructions are saved in <code>admin/environments/Dockerfile</code> in the repository, with a longer explanation in <code>admin/environments/environment.md</code>.</p></div>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-1-3"><span><b>Make it visible to participants.</b> Set its visibility so every workshop user can pick it (a global environment, or one shared with the workshop users or organization).</span></label>
@@ -405,7 +405,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
           <label class="t"><input type="checkbox" id="a-2-1"><span><b>Create a new environment named exactly <code>Fraud-Detection-LLM</code>.</b> Use <code>Fraud-Detection-Workshop</code> as its base environment, and give it the same visibility as in step 1.</span></label>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="a-2-2"><span><b>Paste this into its Dockerfile instructions and build it.</b> The build downloads several GB, so allow about 10 minutes.</span></label>
+          <label class="t"><input type="checkbox" id="a-2-2"><span><b>Paste this into its Dockerfile instructions and build it.</b> The build downloads several GB, so allow about 10 minutes. The same text is in <code>admin/environments/Dockerfile.llm</code>.</span></label>
                     <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
 RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
 USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
@@ -626,7 +626,7 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
       <p class="goal">Prove the environments work from a normal project before participants arrive, then tell them what to expect.</p>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="a-6-1"><span><b>Do a dry run in a throwaway project.</b> Follow step 1 of the <a href="fraud-workshop-guide.html">workshop guide</a> as a participant would (both the Git and the Domino-hosted option), selecting <code>Fraud-Detection-Workshop</code> in project Settings.</span></label>
+          <label class="t"><input type="checkbox" id="a-6-1"><span><b>Do a dry run in a throwaway project.</b> Follow step 1 of the <a href="../user/fraud-workshop-guide.html">workshop guide</a> as a participant would (both the Git and the Domino-hosted option), selecting <code>Fraud-Detection-Workshop</code> in project Settings.</span></label>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-6-2"><span><b>Run the environment check</b> from a workspace terminal. Every line under "Required" must say <code>ok</code>.</span></label>
@@ -645,7 +645,7 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
           <div class="sub"><p>If GitHub is blocked, participants use the Domino-hosted option with the zip files instead. You can also copy the repository to an internal Git server and give participants that URL.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="a-6-4"><span><b>Send participants what they need:</b> the workshop guide, <code>fraud-workshop-code.zip</code> and <code>fraud-workshop-data.zip</code> from the <code>support/</code> folder, and the names of the hardware tiers to choose.</span></label>
+          <label class="t"><input type="checkbox" id="a-6-4"><span><b>Send participants what they need:</b> the workshop guide, <code>fraud-workshop-code.zip</code> and <code>fraud-workshop-data.zip</code> from the <code>user/downloads/</code> folder, and the names of the hardware tiers to choose.</span></label>
         </li>
       </ul>
       <div class="callout ok"><b>Participants no longer build anything</b><p>With the environments and tiers in place, participants only create a project, add the code and data, select an environment and run. If one cannot see an environment in the list, check its visibility (step 1, 2 or 4 above) first.</p></div>

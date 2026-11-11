@@ -1,42 +1,37 @@
 # Fraud detection workshop
 
-A hands-on Domino workshop. Train a credit card fraud model as a Domino Job, inspect and register it,
-publish it as a REST endpoint, then put a Streamlit app in front of it. Optional steps add two open-model
-agents on a GPU (a chat agent that simulates transactions and a LoRA fine-tuned fraud scorer) and a code
-assistant. This repository is the whole project: the guides, the code and the data.
+A hands-on Domino workshop. Train a credit card fraud model as a Domino Job, inspect and register it, publish it
+as a REST endpoint, then put a Streamlit app in front of it. Optional steps add two open-model agents on a GPU and
+a code assistant.
 
-## Start here
+## Where to go
 
-- **Participants:** open `fraud-workshop-guide.html` in a browser (or `fraud-workshop-guide.pdf`) and follow it. Step 1 shows two ways to get
-  the code into a Domino project: fork this repository and create a Git-based project (recommended), or
-  upload `support/fraud-workshop-code.zip` into a Domino-hosted project.
-- **Administrators:** do `admin-setup-guide.html` (or the PDF) once beforehand (compute environments, hardware tiers,
-  optional code assistant environment and Oracle GPU notes).
+| You are | Go to | What you will find |
+| --- | --- | --- |
+| **Taking the workshop** | [`user/`](user/) | The participant guide (HTML and PDF) and the files to download |
+| **A Domino administrator** | [`admin/`](admin/) | The one-time setup guide (HTML and PDF) and the environment Dockerfiles |
 
-## What is in this repository
+Administrators go first: participants need the environments and hardware tiers that the admin guide creates.
+
+## The rest of this repository
+
+The files at the top level are the Domino project itself. Domino runs a Git-based project from the repository
+root, so `exercises/`, `app.sh` and the others have to stay here. Participants do not need to open them to follow
+the guide.
 
 | Path | What it is |
 | --- | --- |
-| `fraud-workshop-guide.html` | The workshop guide for participants |
-| `admin-setup-guide.html` | One-time setup for Domino administrators |
-| `fraud-workshop-guide.pdf`, `admin-setup-guide.pdf` | PDF copies of both guides, for when the HTML will not open (restrictions or browser issues) |
-| `exercises/` | The exercises: `a_DataExploration` to `f_OpenModelAgents`, with their instructions |
-| `.setup/` | Environment files and `unzip_dataset.ipynb`, which puts the raw data in the Domino Dataset |
-| `app.sh`, `domino_short_id.py`, `pyproject.toml`, `run.sh` | Project files that Domino jobs and the app use |
-| `support/fraud-workshop-data.zip` | The raw transactions (78,324 rows) |
-| `support/fraud-workshop-code.zip` | The same code as a zip, for the upload option |
-| `support/build_zips.sh` | Rebuilds the code zip from this repository |
-| `support/build_pdfs.sh` | Rebuilds both PDFs from the HTML guides (needs Google Chrome) |
+| `exercises/` | The exercises, `a_DataExploration` to `f_OpenModelAgents`, with their instructions |
+| `.setup/` | `verify_environment.py`, `unzip_dataset.ipynb` (loads the raw data into the Domino Dataset) and setup notes |
+| `app.sh`, `domino_short_id.py`, `pyproject.toml`, `run.sh`, `__init__.py`, `artifacts/` | Project files that Jobs and the app use |
+| `tools/` | For whoever maintains this repository: `build_zips.sh` and `build_pdfs.sh` |
 
 Also published as a private Claude artifact: https://claude.ai/artifact/AmfQRdGuyB4uTA4zgwUNqb
 
-## Keeping the zip and PDFs in step
+## Maintaining it
 
-After editing a guide, run `bash support/build_pdfs.sh` and commit the PDFs with it. The code zip is generated from the files in this repository, so edit the files, not the zip. After any
-change to the code, run `bash support/build_zips.sh` and commit the new zip with it.
-
-## Using Git in Domino
-
-A Git-based project reads its code from your fork, but its Domino Dataset is separate and starts empty.
-Run `.setup/unzip_dataset.ipynb` once to copy the data from `support/`
-into the dataset. After you change a file, commit and push so Jobs and the app pick it up.
+- After editing a guide, run `bash tools/build_pdfs.sh` (needs Google Chrome) and commit the PDFs with it.
+- The code zip is generated from the project files, so edit the files, not the zip. After any code change, run
+  `bash tools/build_zips.sh` and commit the new zip with it.
+- A Git-based project has its own empty Domino Dataset. `.setup/unzip_dataset.ipynb` copies the data from
+  `user/downloads/` into it, once.
