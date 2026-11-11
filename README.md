@@ -7,6 +7,8 @@ simulates transactions and a LoRA fine-tuned fraud scorer) in a second **Agent**
 
 - `fraud-workshop-guide.html`: the workshop guide. Open it in a browser. Also published as a
   private Claude artifact: https://claude.ai/artifact/AmfQRdGuyB4uTA4zgwUNqb
+- `admin-setup-guide.html`: one-time setup for Domino administrators (compute environments and hardware
+  tiers in the Admin panel). Do this before the workshop; participants then only select those resources.
 - `support/`: zip files that support the modeling exercise (`fraud-workshop-data.zip`,
   `fraud-workshop-code.zip`).
 

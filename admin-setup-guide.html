@@ -1,0 +1,693 @@
+<title>Fraud Detection Workshop: Admin Setup</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: sticky step index on the left, one reading column on the right.
+     Steps are a true sequence, so they are numbered. Teal accent, amber for cautions. */
+  :root {
+    --bg: #F4F7F9;
+    --surface: #FFFFFF;
+    --surface-2: #EAF0F4;
+    --fg: #14202B;
+    --muted: #536575;
+    --line: #D6DFE6;
+    --accent: #0A7771;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #DDF1EF;
+    --warn-bg: #FFF3D6;
+    --warn-line: #D9A100;
+    --warn-fg: #5E4300;
+    --ok-bg: #E3F4E8;
+    --ok-line: #2E8B57;
+    --ok-fg: #17492E;
+    --code-bg: #0F1C28;
+    --code-fg: #DCE8F2;
+    --code-line: #243546;
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0D161E;
+      --surface: #141F2A;
+      --surface-2: #1B2937;
+      --fg: #E4EDF4;
+      --muted: #9AACBB;
+      --line: #27394A;
+      --accent: #3FC6BC;
+      --accent-ink: #062B28;
+      --accent-soft: #123B3A;
+      --warn-bg: #36290A;
+      --warn-line: #C99A12;
+      --warn-fg: #F2D88A;
+      --ok-bg: #12301F;
+      --ok-line: #3BA36B;
+      --ok-fg: #A8E3C0;
+      --code-bg: #08111A;
+      --code-fg: #DCE8F2;
+      --code-line: #20313F;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D161E;
+    --surface: #141F2A;
+    --surface-2: #1B2937;
+    --fg: #E4EDF4;
+    --muted: #9AACBB;
+    --line: #27394A;
+    --accent: #3FC6BC;
+    --accent-ink: #062B28;
+    --accent-soft: #123B3A;
+    --warn-bg: #36290A;
+    --warn-line: #C99A12;
+    --warn-fg: #F2D88A;
+    --ok-bg: #12301F;
+    --ok-line: #3BA36B;
+    --ok-fg: #A8E3C0;
+    --code-bg: #08111A;
+    --code-fg: #DCE8F2;
+    --code-line: #20313F;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+  }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  code, kbd, pre { font-family: var(--mono); }
+  code {
+    font-size: 0.88em;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.08em 0.35em;
+    overflow-wrap: anywhere;
+  }
+
+  .shell {
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 48px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-block: 32px 72px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  /* ---------- step index ---------- */
+  .index { position: sticky; top: 24px; align-self: start; font-size: 14px; }
+  .index h2 {
+    font: 600 12px/1 var(--body);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .index ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .index a {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    align-items: baseline;
+    gap: 6px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+  }
+  .index a .n { font-family: var(--mono); font-size: 12px; }
+  .index a:hover { background: var(--surface-2); color: var(--fg); }
+  .index a.on { color: var(--fg); background: var(--accent-soft); border-left-color: var(--accent); font-weight: 500; }
+  .progress { margin-top: 18px; font-size: 13px; color: var(--muted); }
+  .bar { height: 6px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin: 6px 0 8px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+  .linkbtn {
+    background: none; border: 0; padding: 0; color: var(--accent);
+    font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+
+  /* ---------- masthead ---------- */
+  main { min-width: 0; max-width: 760px; }
+  .eyebrow {
+    font: 600 12px/1 var(--body);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2rem, 4.4vw, 2.9rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  .lede { font-size: 1.125rem; color: var(--muted); margin: 0 0 24px; max-width: 62ch; }
+
+  .glance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    margin: 0 0 40px;
+    overflow: hidden;
+  }
+  .glance div { padding: 14px 16px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: -1px -1px 0 0; }
+  .glance dt { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .glance dd { margin: 2px 0 0; font: 600 1.35rem/1.2 var(--display); font-variant-numeric: tabular-nums; }
+  .glance dd small { font: 400 13px/1.3 var(--body); color: var(--muted); display: block; margin-top: 2px; }
+
+  h2.sec {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  p { margin: 0 0 14px; max-width: 68ch; }
+
+  .tablewrap { overflow-x: auto; margin: 0 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- steps ---------- */
+  .step { padding-top: 40px; margin-top: 40px; border-top: 1px solid var(--line); }
+  .step-h { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .step-h .num {
+    flex: none;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink);
+    border-radius: 10px;
+    font: 700 1.2rem/1 var(--display);
+  }
+  .step-h h2 { font-family: var(--display); font-size: 1.6rem; line-height: 1.15; margin: 0; text-wrap: balance; }
+  .goal { color: var(--muted); font-size: 1.02rem; margin: 6px 0 22px; }
+  h3 { font-family: var(--display); font-size: 1.1rem; margin: 28px 0 10px; }
+
+  ul.tasks { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 10px; }
+  ul.tasks > li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  label.t { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; cursor: pointer; }
+  label.t input { width: 18px; height: 18px; margin: 3px 0 0; accent-color: var(--accent); }
+  label.t span { display: block; min-width: 0; }
+  label.t input:checked + span { color: var(--muted); }
+  label.t input:checked + span b { text-decoration: line-through; text-decoration-color: var(--muted); }
+  .sub { margin: 8px 0 0 34px; color: var(--muted); font-size: 14.5px; }
+  .sub p { margin: 0 0 8px; }
+
+  /* code with copy button */
+  .code { position: relative; margin: 10px 0 0 34px; }
+  .code.flush { margin-left: 0; margin-bottom: 18px; }
+  .code pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border: 1px solid var(--code-line);
+    border-radius: 8px;
+    padding: 12px 74px 12px 14px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+  .code button.copy {
+    position: absolute; top: 8px; right: 8px;
+    background: transparent; color: var(--code-fg);
+    border: 1px solid var(--code-line);
+    border-radius: 6px;
+    padding: 3px 10px;
+    font: 500 12px/1.5 var(--body);
+    cursor: pointer;
+  }
+  .code button.copy:hover { background: rgba(255,255,255,.08); }
+  .code .lbl {
+    display: block; font: 500 11px/1 var(--body); letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 6px;
+  }
+
+  .callout { border-radius: 10px; border: 1px solid; padding: 12px 16px; margin: 0 0 18px; font-size: 15px; }
+  .callout > b:first-child { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout ul { margin: 6px 0 0; padding-left: 20px; }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-fg); }
+  .callout.ok { background: var(--ok-bg); border-color: var(--ok-line); color: var(--ok-fg); }
+  .callout.warn code, .callout.ok code { background: transparent; border-color: currentColor; }
+
+  details { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); margin: 0 0 12px; }
+  summary { cursor: pointer; padding: 11px 16px; font-weight: 500; }
+  details > div { padding: 0 16px 14px; }
+  details > div p:last-child { margin-bottom: 0; }
+
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
+  /* ---------- small screens ---------- */
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 20px 56px; }
+    .index { position: static; }
+    .index ol { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+    .index a { grid-template-columns: auto; white-space: nowrap; border: 1px solid var(--line); border-radius: 99px; padding: 6px 12px; background: var(--surface); }
+    .index a .n { display: none; }
+    .index a.on { border-color: var(--accent); }
+    .index a .full { display: none; }
+    .index a .short { display: inline; }
+    .progress { margin-top: 8px; }
+    .code { margin-left: 0; }
+    .sub { margin-left: 0; }
+  }
+  @media (min-width: 901px) { .index a .short { display: none; } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar i { transition: none; } }
+  .pill { font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: .02em; padding: 2px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; margin-left: 6px; }
+</style>
+
+<div class="shell">
+  <nav class="index" aria-label="Admin setup steps">
+    <h2>Admin steps</h2>
+    <ol id="stepnav">
+      <li><a href="#a1"><span class="n">1</span><span><span class="full">Create the workshop environment</span><span class="short">1 Environment</span></span></a></li>
+      <li><a href="#a2"><span class="n">2</span><span><span class="full">Create the GPU environment</span><span class="short">2 GPU env</span></span></a></li>
+      <li><a href="#a3"><span class="n">3</span><span><span class="full">Check hardware tiers</span><span class="short">3 Hardware</span></span></a></li>
+      <li><a href="#a4"><span class="n">4</span><span><span class="full">Code assistant environment</span><span class="short">4 Code assist</span></span></a></li>
+      <li><a href="#a5"><span class="n">5</span><span><span class="full">Oracle GPUs and data plane</span><span class="short">5 Oracle GPUs</span></span></a></li>
+      <li><a href="#a6"><span class="n">6</span><span><span class="full">Test and hand off</span><span class="short">6 Hand off</span></span></a></li>
+    </ol>
+    <div class="progress" aria-live="polite">
+      <div><span id="pcount">0</span> of <span id="ptotal">0</span> items checked</div>
+      <div class="bar"><i id="pbar"></i></div>
+      <button class="linkbtn" type="button" id="reset">Clear my checkmarks</button>
+    </div>
+  </nav>
+
+  <main>
+    <p class="eyebrow">For Domino administrators</p>
+    <h1>Workshop Admin Setup</h1>
+    <p class="lede">Do this once, before the workshop, with Domino admin rights. It prepares everything that lives in the Admin panel (the two compute environments and the hardware tiers) so participants only select these resources and never build or configure them. Participants then follow the <a href="fraud-workshop-guide.html">workshop guide</a>.</p>
+
+    <dl class="glance">
+      <div><dt>Environments</dt><dd>3<small>CPU, GPU, code assistant</small></dd></div>
+      <div><dt>Hardware tiers</dt><dd>3 kinds<small>Small, Medium, GPU</small></dd></div>
+      <div><dt>Build time</dt><dd>~25 min<small>three image builds</small></dd></div>
+      <div><dt>Where</dt><dd>Admin panel<small>Manage Resources</small></dd></div>
+    </dl>
+
+    <h2 class="sec">What participants will expect to find</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Resource</th><th>Name</th><th>Used in workshop step</th></tr></thead>
+        <tbody>
+          <tr><td>Compute environment</td><td><code>Fraud-Detection-Workshop</code></td><td>1 to 8 (jobs, endpoint, app)</td></tr>
+          <tr><td>Compute environment</td><td><code>Fraud-Detection-LLM</code></td><td>9 (fine-tuning Job and GPU app)</td></tr>
+          <tr><td>Hardware tiers</td><td>Small, Medium, a small endpoint tier</td><td>2, 3, 6, 7</td></tr>
+          <tr><td>Hardware tier</td><td>A GPU tier, 24 GB or more</td><td>9</td></tr>
+          <tr><td>Compute environment (optional)</td><td><code>Fraud-Detection-CodeAssist</code></td><td>Any step, when using Cline or Codex in a VS Code workspace</td></tr>
+          <tr><td>Data plane and GPU tier (optional)</td><td>Oracle Cloud GPUs</td><td>Hosting a model for the code assistants</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ============ A1 ============ -->
+    <section class="step" id="a1">
+      <div class="step-h"><span class="num">1</span><h2>Create the workshop environment</h2></div>
+      <p class="goal">One CPU environment runs the data Jobs, the training Job, the model endpoint and the app. It needs Streamlit and a Python 3.12 compatibility fix that the standard environment lacks.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-1-1"><span><b>Open the environments page.</b> In the Admin panel, go to Manage Resources, then Environments, and choose to create a new environment.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-1-2"><span><b>Name it and choose a base.</b> Name it exactly <code>Fraud-Detection-Workshop</code> and start from the Domino Standard Environment for Python 3.12.</span></label>
+          <div class="sub"><p>Participants select it by this name, and the guide refers to it by this name, so do not change the spelling.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-1-3"><span><b>Make it visible to participants.</b> Set its visibility so every workshop user can pick it (a global environment, or one shared with the workshop users or organization).</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-1-4"><span><b>Paste the Dockerfile instructions</b> below into the Dockerfile instructions box. Leave the other settings at their defaults.</span></label>
+          <div class="sub"><p>The last two blocks matter. Python 3.12 removed a function that Domino's model-serving layer still calls, and without the fix the model endpoint never starts. The model API build also needs the image to end on the non-root user.</p></div>
+                    <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code># Prerequisites for uWSGI
+USER root
+RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends gcc &amp;&amp; \
+    apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+ARG LDFLAGS=-fno-lto
+ENV LDFLAGS=-fno-lto
+ENV PYTHONPATH="${PYTHONPATH}:/mnt/code:/mnt"
+
+# Packages used by the app and the EDA report
+RUN pip install --no-cache-dir "setuptools&lt;81" Flask Flask-Compress Flask-Cors uwsgi six prometheus-client ydata_profiling streamlit st-pages streamlit-extras "lxml[html_clean]"
+
+# Python 3.12 removed configparser.SafeConfigParser; Domino's model-serving harness still calls it
+USER root
+RUN printf '%s\n' \
+  'import configparser' \
+  'if not hasattr(configparser, "SafeConfigParser"):' \
+  '    class SafeConfigParser(configparser.ConfigParser):' \
+  '        def readfp(self, fp, filename=None):' \
+  '            return self.read_file(fp, filename)' \
+  '    configparser.SafeConfigParser = SafeConfigParser' \
+  &gt; /opt/conda/lib/python3.12/site-packages/sitecustomize.py
+
+# Model API builds need the image to end on the non-root user
+USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-1-5"><span><b>Build it and wait for it to finish.</b> Confirm the new revision shows as built and active.</span></label>
+          <div class="sub"><p>If you edit the environment later, each save makes a new revision and the newest successful one becomes the active one. Older revisions are harmless history and do not need to be archived.</p></div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ A2 ============ -->
+    <section class="step" id="a2">
+      <div class="step-h"><span class="num">2</span><h2>Create the GPU environment</h2></div>
+      <p class="goal">A second environment adds the packages that serve and fine-tune the two open models. It builds on the first, so it must be built second.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-2-1"><span><b>Create a new environment named exactly <code>Fraud-Detection-LLM</code>.</b> Use <code>Fraud-Detection-Workshop</code> as its base environment, and give it the same visibility as in step 1.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-2-2"><span><b>Paste this into its Dockerfile instructions and build it.</b> The build downloads several GB, so allow about 10 minutes.</span></label>
+                    <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
+RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
+USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-2-3"><span><b>Confirm the build succeeded</b> and the revision is active.</span></label>
+          <div class="sub"><p>The model weights themselves are not in the image. They download on first use into the participant project's dataset, so the cluster needs outbound access to Hugging Face, or the models must be mirrored to an internal registry (see the provenance note in the workshop guide).</p></div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ A3 ============ -->
+    <section class="step" id="a3">
+      <div class="step-h"><span class="num">3</span><h2>Check hardware tiers</h2></div>
+      <p class="goal">Participants choose from the hardware tiers you provide. Make sure the tiers below exist and are available to the workshop users.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-3-1"><span><b>A Small and a Medium CPU tier.</b> In the Admin panel, under Manage Resources, open Hardware Tiers and confirm both exist. Small runs the data Jobs, Medium runs the training Job.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-3-2"><span><b>A small tier for model endpoints.</b> Confirm a tier is marked as available for model APIs, since the endpoint in step 6 uses the small one.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-3-3"><span><b>A GPU tier.</b> Confirm a GPU hardware tier exists and the cluster has a GPU node pool that matches it.</span></label>
+          <div class="sub"><p>Both open models run on one GPU. With 40 GB or more (for example an L40S 48 GB) the generator runs in full precision. A 24 GB card also works because the launcher loads the generator in 8-bit, at a small cost in quality. Smaller than 24 GB will not fit both models.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-3-4"><span><b>Make sure a GPU node is free or can scale up.</b> If the cluster has no free GPU node, participants' GPU runs sit in Pending until one appears.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-3-5"><span><b>Check who may use the GPU tier.</b> If tiers are restricted, give the workshop users access.</span></label>
+        </li>
+      </ul>
+      <div class="callout warn"><b>Plan GPU capacity by headcount</b><p>Each participant who reaches step 9 holds one GPU for the fine-tuning Job and again for the running app. A room of people at the same step can exhaust a small pool, so scale the node pool up beforehand, or let people take turns.</p></div>
+    </section>
+
+    <!-- ============ A4 ============ -->
+    <section class="step" id="a4">
+      <div class="step-h"><span class="num">4</span><h2>Code assistant environment <span class="pill">optional</span></h2></div>
+      <p class="goal">Build one environment that already contains the Cline extension (as a <code>.vsix</code> file), the Domino plugin for Cline and the tools it needs, so participants open a VS Code workspace and only paste in their own API key. Codex needs nothing extra: the Domino Standard Environment already includes the Codex extension, the Codex CLI and the Domino skills.</p>
+
+      <div class="callout warn"><b>Some of this is a best guess</b><p>The steps follow the AI coding assistants setup guide and the usual Domino and code-server behavior. File locations marked "confirm" can differ by Domino version, so expect to adjust them after the first test in step 6. Domino 6.3 or Domino Cloud is assumed for the pre-installed Codex tooling.</p></div>
+
+      <h3>4a. Gather the files</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-1"><span><b>Get the Cline <code>.vsix</code>.</b> The extension id is <code>saoudrizwan.claude-dev</code>. On a connected machine, download the version you approve from the Open VSX registry, which is the gallery code-server uses. Note the version number.</span></label>
+          <div class="sub"><p>If your cluster cannot reach the internet during an environment build, put the file on an internal artifact server or file share that the build can reach, and use that URL below. Scan it and record its checksum as you would any binary you bring in.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-2"><span><b>Get the Domino plugin for Cline.</b> The source is <code>github.com/dominodatalab/domino-cline-plugin</code>. If the build cannot reach GitHub, mirror the repository internally and use the mirror URL below.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-3"><span><b>Confirm the base has what the plugin needs.</b> It needs Python 3.11 or later (the workshop environment has 3.12), <code>git</code>, and <code>uv</code>, which the Dockerfile below installs.</span></label>
+        </li>
+      </ul>
+
+      <h3>4b. Create the environment</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-4"><span><b>Create a new environment named <code>Fraud-Detection-CodeAssist</code>.</b> Use <code>Fraud-Detection-Workshop</code> as its base (it already has the workshop packages and the VS Code IDE), and give it the same visibility as in step 1.</span></label>
+          <div class="sub"><p>Participants then use this one environment for the whole workshop when they want an assistant. If you also want assistants in the GPU workspace, repeat this step with <code>Fraud-Detection-LLM</code> as the base.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-5"><span><b>Paste this into its Dockerfile instructions.</b> Replace the values in angle brackets. This bakes the extension and plugin into the image under <code>/opt/vendor</code> and pre-builds the plugin's Python dependencies so nothing needs the internet when a workspace starts.</span></label>
+          <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
+
+# 1. Cline extension as a .vsix file (swap in your internal URL if needed)
+ARG CLINE_VERSION=&lt;approved-version&gt;
+RUN mkdir -p /opt/vendor/vsix &amp;&amp; \
+    curl -fsSL -o /opt/vendor/vsix/cline.vsix \
+      "https://open-vsx.org/api/saoudrizwan/claude-dev/${CLINE_VERSION}/file/saoudrizwan.claude-dev-${CLINE_VERSION}.vsix"
+
+# 2. Domino plugin for Cline (swap in your internal mirror if needed)
+RUN git clone --depth 1 https://github.com/dominodatalab/domino-cline-plugin.git /opt/vendor/domino-cline-plugin
+
+# 3. uv, then pre-build the MCP server's Python environment
+RUN pip install --no-cache-dir uv &amp;&amp; chown -R ubuntu:ubuntu /opt/vendor
+USER ubuntu
+ENV UV_PYTHON_DOWNLOADS=never
+RUN cd /opt/vendor/domino-cline-plugin/mcp-servers/domino_mcp_server &amp;&amp; uv sync</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-6"><span><b>Paste this into the environment's Pre Run Script.</b> It runs when each workspace starts. It installs the extension from the baked-in file and links the Domino skills, workflows, rule and hook into the places Cline reads. It pre-fills the MCP server entry only if the user has none yet.</span></label>
+          <div class="sub"><p>The links go in the user's home folder, which is kept across restarts only when Home Directory Persistence is on. Running this script on every start rebuilds them either way, so participants do not repeat the plugin setup.</p></div>
+          <div class="code"><span class="lbl">Pre Run Script</span><pre><code>#!/bin/bash
+P=/opt/vendor/domino-cline-plugin
+
+# Cline extension, from the .vsix baked into the image (no internet needed)
+code-server --install-extension /opt/vendor/vsix/cline.vsix \
+  --extensions-dir ${HOME}/.local/share/code-server/extensions
+
+# Domino skills, workflows, global rule and hook
+mkdir -p ~/.cline/skills ~/Documents/Cline/Workflows ~/Documents/Cline/Rules ~/Documents/Cline/Hooks
+for d in $P/skills/*/; do ln -sfn "$d" ~/.cline/skills/"$(basename "$d")"; done
+for f in $P/workflows/*.md; do ln -sfn "$f" ~/Documents/Cline/Workflows/"$(basename "$f")"; done
+ln -sfn $P/rules/domino.md ~/Documents/Cline/Rules/domino.md
+ln -sfn $P/hooks/PostToolUse ~/Documents/Cline/Hooks/PostToolUse
+
+# MCP server entry for Cline, only if the user has none (confirm the path on first test)
+S=~/.local/share/code-server/User/globalStorage/saoudrizwan.claude-dev/settings
+if [ ! -f $S/cline_mcp_settings.json ]; then
+  mkdir -p $S
+  cat &gt; $S/cline_mcp_settings.json &lt;&lt;EOF
+{"mcpServers":{"domino_server":{"command":"uv",
+ "args":["--directory","$P/mcp-servers/domino_mcp_server","run","domino_mcp_server.py"],
+ "env":{"UV_OFFLINE":"1","UV_PYTHON_DOWNLOADS":"never"}}}}
+EOF
+fi</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-7"><span><b>Build it</b> and confirm the revision is active.</span></label>
+        </li>
+      </ul>
+
+      <h3>4c. Domino settings and network</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-8"><span><b>Turn on Home Directory Persistence</b> for workspaces, if your deployment offers it as an admin setting. Cline's saved API settings live in the home folder and are lost on restart without it.</span></label>
+          <div class="sub"><p>The setting name and location depend on your Domino version, so look for it in the admin configuration. Codex does not need it, because Domino already saves <code>~/.codex</code>.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-9"><span><b>Allow outbound access from workspaces to the model provider.</b> Cline and Codex call a model API at run time. Open the route to the provider's API (for example OpenAI) or to your internal OpenAI-compatible gateway, and to nothing else if you can.</span></label>
+          <div class="sub"><p>The Open VSX download and the GitHub clone are needed only at environment build time, not for participants.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-10"><span><b>Decide where API keys come from.</b> Each participant brings their own key, or you issue keys from a gateway. Never put a key in the environment or the Dockerfile. Users can set it as a Domino user environment variable or enter it in the extension.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-4-11"><span><b>Optional: preset Codex for an internal gateway.</b> If everyone uses the same gateway, add this to the Pre Run Script so a first <code>~/.codex/config.toml</code> exists. Replace the values, and confirm the gateway supports the Responses API.</span></label>
+          <div class="code"><span class="lbl">Add to the Pre Run Script</span><pre><code>mkdir -p ~/.codex
+if [ ! -f ~/.codex/config.toml ]; then
+cat &gt; ~/.codex/config.toml &lt;&lt;'EOF'
+model_provider = "internal_gateway"
+model = "&lt;your-model-id&gt;"
+[model_providers.internal_gateway]
+name = "Internal OpenAI-compatible gateway"
+base_url = "https://gateway.example.internal/v1"
+env_key = "GATEWAY_API_KEY"
+wire_api = "responses"
+EOF
+fi</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============ A5 ============ -->
+    <section class="step" id="a5">
+      <div class="step-h"><span class="num">5</span><h2>Oracle GPUs in a separate data plane <span class="pill">optional</span></h2></div>
+      <p class="goal">If the code assistants should use a model that runs on your own GPUs in Oracle Cloud, decide whether those GPUs are managed by Domino. If they are, they need a data plane and a hardware tier. If they are not, they need only a network path.</p>
+
+      <div class="callout warn"><b>We do not know your environment yet</b><p>This step is written from assumptions and is meant to be refined with you as you go. Where a name or setting is a guess it is marked, and the questions at the end of the step are the ones to answer first. Send what you find back and we will fix the steps.</p></div>
+
+      <h3>5a. Choose the pattern</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Pattern</th><th>What it means</th><th>Hardware tier needed?</th></tr></thead>
+          <tbody>
+            <tr><td><b>A. Domino runs the model</b></td><td>Domino is installed or attached in the Oracle data plane. A model server such as vLLM runs on those GPUs as a Domino app, endpoint or Job, and the assistants call its URL.</td><td><b>Yes.</b> A data plane, a GPU node pool and a hardware tier in that data plane.</td></tr>
+            <tr><td><b>B. The model is hosted outside Domino</b></td><td>Your team runs an inference service on the Oracle GPUs (for example on OKE or a GPU VM) and Domino only calls it over the network.</td><td><b>No.</b> Workspaces run on ordinary tiers. You need a reachable URL, a key and an egress rule.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The workspace that hosts VS Code does not need a GPU either way. The assistant is a client that sends requests to a model, so the GPU is needed only where the model itself runs.</p>
+
+      <h3>5b. Pattern A: Domino-managed GPUs in the Oracle data plane</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-1"><span><b>Confirm the Oracle data plane is registered</b> with your Domino control plane and shows as healthy. If it is not, that is a separate, larger task to do first, with its own network, storage and identity requirements.</span></label>
+          <div class="sub"><p>Guess: this is done under the admin settings for hybrid or remote data planes. Names vary by Domino version.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-2"><span><b>Confirm the GPU nodes are in a node pool</b> in that data plane, with the GPU drivers and the Kubernetes labels Domino uses to match hardware tiers to nodes.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-3"><span><b>Create a hardware tier on that data plane.</b> In Admin, under Manage Resources, then Hardware Tiers, create a tier, choose the Oracle data plane, point it at the GPU node pool, and set its CPU, memory and GPU count to fit the model.</span></label>
+          <div class="sub"><p>Tiers are grouped by data plane in the picker, so participants will see it under the Oracle data plane's name, not under Local. Give it a name that says what it is, such as <code>oci-gpu-a10-24gb</code>, and set which users and organizations may use it.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-4"><span><b>Make sure the environment works on that data plane.</b> The environment image must be pullable from the Oracle data plane, so check that its registry is reachable and the image has synced or can be pulled.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-5"><span><b>Serve the model on the GPU tier.</b> Run an OpenAI-compatible server such as vLLM there, using the Domino approach you prefer (a long-running app or a model endpoint), and record its URL.</span></label>
+          <div class="sub"><p>Cline works with any OpenAI-compatible endpoint. Codex expects the Responses API, so confirm your server version supports it, or use Cline for this model.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-6"><span><b>Check data access.</b> A project's files and datasets can live on one data plane while the model runs on another. Confirm what the Oracle data plane can read, since the workshop's fine-tuning Job (step 9) reads and writes the project dataset.</span></label>
+        </li>
+      </ul>
+
+      <h3>5c. Pattern B: a model hosted outside Domino</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-7"><span><b>Get the model URL and a key scheme</b> from the team that runs the inference service on the Oracle GPUs, and confirm it speaks the OpenAI API.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-8"><span><b>Open the network path from Domino workspaces</b> to that URL. This is usually a firewall or security-list rule on the Oracle side and an egress rule on the Domino cluster, plus any private link or VPN between them.</span></label>
+        </li>
+      </ul>
+
+      <h3>5d. Either pattern: point the assistants at it</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-9"><span><b>Give participants the base URL and model id.</b> In Cline they choose <b>OpenAI Compatible</b> and enter the base URL, key and model id. For Codex, use the gateway settings in step 4c.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-5-10"><span><b>Test one request from a workspace</b> with the command below. A JSON reply with the model id means the path works.</span></label>
+          <div class="code"><pre><code>curl -s -H "Authorization: Bearer $GATEWAY_API_KEY" https://gateway.example.internal/v1/models</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+      </ul>
+
+      <div class="callout ok"><b>Questions to answer first</b><p>1. Is Domino running in Oracle, or are the GPUs managed by someone else (pattern A or B)? 2. Which Domino version, and is the Oracle data plane already registered? 3. What GPU model and count, and is it shared with other work? 4. Is the Oracle environment air-gapped from the internet, and from the primary data plane? 5. Which model will run, and does its server support the Responses API? 6. Where do project datasets live relative to the Oracle data plane? 7. Who issues API keys?</p></div>
+    </section>
+
+    <!-- ============ A6 ============ -->
+    <section class="step" id="a6">
+      <div class="step-h"><span class="num">6</span><h2>Test and hand off</h2></div>
+      <p class="goal">Prove the environments work from a normal project before participants arrive, then tell them what to expect.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-1"><span><b>Do a dry run in a throwaway project.</b> Follow step 1 of the <a href="fraud-workshop-guide.html">workshop guide</a> as a participant would, selecting <code>Fraud-Detection-Workshop</code> in project Settings.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-2"><span><b>Run the environment check</b> from a workspace terminal. Every line under "Required" must say <code>ok</code>.</span></label>
+          <div class="code"><pre><code>python .setup/verify_environment.py</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-3"><span><b>Start a workspace on a GPU tier</b> with <code>Fraud-Detection-LLM</code> and confirm it reaches Running.</span></label>
+          <div class="code"><pre><code>nvidia-smi</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-5"><span><b>If you built the code assistant environment (step 4), test it.</b> Start a VS Code workspace with <code>Fraud-Detection-CodeAssist</code>. Confirm the Cline icon is in the sidebar, <code>ls ~/.cline/skills</code> lists the Domino skills, and <code>domino_server</code> shows connected under Cline's MCP Servers. Then ask Cline to list your Domino clusters.</span></label>
+          <div class="sub"><p>If the extension or skills are missing, read the workspace's startup log for the Pre Run Script, then check the file locations marked "confirm" in step 4.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-4"><span><b>Send participants what they need:</b> the workshop guide, <code>fraud-workshop-code.zip</code> and <code>fraud-workshop-data.zip</code> from the <code>support/</code> folder, and the names of the hardware tiers to choose.</span></label>
+        </li>
+      </ul>
+      <div class="callout ok"><b>Participants no longer build anything</b><p>With the environments and tiers in place, participants only create a project, add the code and data, select an environment and run. If one cannot see an environment in the list, check its visibility (step 1, 2 or 4 above) first.</p></div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var KEY = 'fraud-workshop-admin-progress-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('label.t input[type=checkbox]'));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+  }
+  function paint() {
+    var done = boxes.filter(function (b) { return b.checked; }).length;
+    document.getElementById('pcount').textContent = done;
+    document.getElementById('ptotal').textContent = boxes.length;
+    document.getElementById('pbar').style.width = (boxes.length ? (100 * done / boxes.length) : 0) + '%';
+  }
+  boxes.forEach(function (b) {
+    if (saved[b.id]) b.checked = true;
+    b.addEventListener('change', function () {
+      if (b.checked) saved[b.id] = 1; else delete saved[b.id];
+      save(); paint();
+    });
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    saved = {}; save(); paint();
+  });
+  paint();
+
+  // copy buttons
+  Array.prototype.forEach.call(document.querySelectorAll('button.copy'), function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = btn.parentNode.querySelector('pre');
+      var text = pre.textContent;
+      function flash(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = 'Copy'; }, 1600); }
+      function fallback() {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        flash('Selected');
+      }
+      try {
+        navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+
+  // highlight the step being read
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll('#stepnav a'), function (a) { links[a.getAttribute('href').slice(1)] = a; });
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.step'));
+  function current() {
+    var y = window.innerHeight * 0.3, id = sections[0].id;
+    sections.forEach(function (s) { if (s.getBoundingClientRect().top <= y) id = s.id; });
+    Object.keys(links).forEach(function (k) { links[k].classList.toggle('on', k === id); });
+  }
+  window.addEventListener('scroll', current, { passive: true });
+  window.addEventListener('resize', current);
+  current();
+})();
+</script>

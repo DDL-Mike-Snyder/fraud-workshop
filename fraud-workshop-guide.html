@@ -279,6 +279,7 @@
   }
   @media (min-width: 901px) { .index a .short { display: none; } }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bar i { transition: none; } }
+  .pill { font-family: var(--body); font-size: 12px; font-weight: 600; letter-spacing: .02em; padding: 2px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); vertical-align: middle; margin-left: 6px; }
 </style>
 
 <div class="shell">
@@ -295,6 +296,7 @@
       <li><a href="#s8"><span class="n">8</span><span><span class="full">Check the real model answers</span><span class="short">8 Check</span></span></a></li>
       <li><a href="#s9"><span class="n">9</span><span><span class="full">Deploy the two open models</span><span class="short">9 Open models</span></span></a></li>
       <li><a href="#s10"><span class="n">10</span><span><span class="full">Review the models and traces</span><span class="short">10 Review</span></span></a></li>
+      <li><a href="#s11"><span class="n">11</span><span><span class="full">Use a code assistant</span><span class="short">11 Assist</span></span></a></li>
       <li><a href="#help"><span class="n">?</span><span><span class="full">If something fails</span><span class="short">Help</span></span></a></li>
     </ol>
     <div class="progress" aria-live="polite">
@@ -307,7 +309,7 @@
   <main>
     <p class="eyebrow">Hands-on workshop</p>
     <h1>Fraud Detection Workshop</h1>
-    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Then add two open-source LLM agents on a GPU: one that simulates transactions from a chat, and one fine-tuned to score them for fraud. Every step is done in the Domino web interface, in a Domino-hosted project.</p>
+    <p class="lede">Train a credit card fraud model as a Domino Job, inspect and register it, publish it as a REST endpoint, then put a web app in front of it. Then add two open-source LLM agents on a GPU: one that simulates transactions from a chat, and one fine-tuned to score them for fraud. Every step is done in the Domino web interface, in a Domino-hosted project. An administrator prepares the compute environments and hardware tiers beforehand (<a href="admin-setup-guide.html">admin setup guide</a>), so you only select them.</p>
 
     <dl class="glance">
       <div><dt>Transactions</dt><dd>78,324<small>77,210 after cleaning</small></dd></div>
@@ -322,7 +324,7 @@
       <table>
         <thead><tr><th class="num">Step</th><th>You do</th><th>You end up with</th></tr></thead>
         <tbody>
-          <tr><td class="num">1</td><td>Check code, data and compute environment; sync your files</td><td>A project that can run every later step</td></tr>
+          <tr><td class="num">1</td><td>Create a project, add the code and data, pick the environment, sync your files</td><td>A project that can run every later step</td></tr>
           <tr><td class="num">2</td><td>Run a notebook, then a Job</td><td><code>clean_cc_transactions.csv</code> and <code>transformed_cc_transactions.csv</code></td></tr>
           <tr><td class="num">3</td><td>Run the XGBoost training script as a Job</td><td>A tracked experiment run with metrics, plots and a model</td></tr>
           <tr><td class="num">4</td><td>Read the Job output and the Experiments page</td><td>A view of how good the model is</td></tr>
@@ -332,6 +334,7 @@
           <tr><td class="num">8</td><td>Submit a transaction and confirm the answer came from the model</td><td>An end-to-end result</td></tr>
           <tr><td class="num">9</td><td>Fine-tune a fraud LLM as a GPU Job, then redeploy the app on a GPU with the second tab</td><td>Two open models serving an <b>Agent</b> tab next to the <b>Trad ML Model</b> tab</td></tr>
           <tr><td class="num">10</td><td>Read the fine-tuning run in Experiments and the agent traces</td><td>Predictor performance and chat-agent behaviour, side by side</td></tr>
+          <tr><td class="num">11</td><td>Optional: open a VS Code workspace and connect Cline or Codex</td><td>An AI assistant that can read and change the project code</td></tr>
         </tbody>
       </table>
     </div>
@@ -339,56 +342,39 @@
     <!-- ============ STEP 1 ============ -->
     <section class="step" id="s1">
       <div class="step-h"><span class="num">1</span><h2>Get the project ready</h2></div>
-      <p class="goal">Four things must be true before any Job runs: the code is in the project, the raw data is in the project's dataset, the compute environment has the right packages, and your files are synced.</p>
+      <p class="goal">Create your project, put the code and the raw data in it, and select the workshop environment. Your administrator has already built the compute environments and hardware tiers (see the <a href="admin-setup-guide.html">admin setup guide</a>), so you only pick them.</p>
 
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-1-1"><span><b>The code is in the project root.</b> You should see <code>exercises/</code>, <code>app.sh</code> and <code>.setup/</code> in the project's Code page.</span></label>
-          <div class="sub"><p>If you received a code zip, upload it from the Code page, then open a workspace terminal in the project root and unzip it.</p></div>
+          <label class="t"><input type="checkbox" id="c-1-1"><span><b>Create a project.</b> Open Projects, choose New Project, give it a name and keep the defaults, so the project is hosted in Domino.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-2"><span><b>Select the workshop environment.</b> In the project, open Settings and choose <code>Fraud-Detection-Workshop</code> as the compute environment.</span></label>
+          <div class="sub"><p>If it is not in the list, ask your administrator to check that it is built and visible to you.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-3"><span><b>Upload the code zip.</b> Open the project's Code page and upload <code>fraud-workshop-code.zip</code> to the project root.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Upload the data zip.</b> Open Data, then the project's default Domino Dataset (Domino creates it with the project), and upload <code>fraud-workshop-data.zip</code> at the top level, not in a subfolder.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-5"><span><b>Start a JupyterLab workspace</b> in the project, with the <code>Fraud-Detection-Workshop</code> environment, and open a terminal in the project root.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-6"><span><b>Unzip the code.</b> You should then see <code>exercises/</code>, <code>app.sh</code> and <code>.setup/</code> in the file browser.</span></label>
           <div class="code"><pre><code>unzip -o fraud-workshop-code.zip</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-2"><span><b>The raw data is at the top level of the project's dataset.</b> Open Data, then the project's default Domino Dataset, and confirm <code>raw_cc_transactions.csv.gz</code> is listed.</span></label>
-          <div class="sub"><p>Inside workspaces and Jobs, the dataset appears at <code>/domino/datasets/local/&lt;your-project-name&gt;/</code>. If you received a data zip instead, upload it to the dataset and run <code>.setup/unzip_dataset.ipynb</code> once to extract it in place.</p></div>
+          <label class="t"><input type="checkbox" id="c-1-7"><span><b>Unzip the data.</b> Open <code>.setup/unzip_dataset.ipynb</code> and run it once. It extracts the data in place, so <code>raw_cc_transactions.csv.gz</code> ends up at the top level of the dataset.</span></label>
+          <div class="sub"><p>Inside workspaces and Jobs, the dataset appears at <code>/domino/datasets/local/&lt;your-project-name&gt;/</code>. Confirm the file is listed on the Data page before moving on.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-3"><span><b>Create the workshop compute environment.</b> Open Environments (top navigation), create a new environment named <code>Fraud-Detection-Workshop</code>, start from the Domino Standard Environment for Python 3.12, and paste the instructions below into its Dockerfile instructions box. Leave the other settings at their defaults, then build it.</span></label>
-          <div class="sub"><p>The standard environment does not include Streamlit, which the app needs. The last block in the file is also required: Python 3.12 removed a function that Domino's model-serving layer still calls, and without the fix the endpoint in step 6 never starts.</p></div>
-          <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code># Prerequisites for uWSGI
-USER root
-RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends gcc &amp;&amp; \
-    apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/*
-
-ARG LDFLAGS=-fno-lto
-ENV LDFLAGS=-fno-lto
-ENV PYTHONPATH="${PYTHONPATH}:/mnt/code:/mnt"
-
-# Packages used by the app and the EDA report
-RUN pip install --no-cache-dir "setuptools&lt;81" Flask Flask-Compress Flask-Cors uwsgi six prometheus-client ydata_profiling streamlit st-pages streamlit-extras "lxml[html_clean]"
-
-# Python 3.12 removed configparser.SafeConfigParser; Domino's model-serving harness still calls it
-USER root
-RUN printf '%s\n' \
-  'import configparser' \
-  'if not hasattr(configparser, "SafeConfigParser"):' \
-  '    class SafeConfigParser(configparser.ConfigParser):' \
-  '        def readfp(self, fp, filename=None):' \
-  '            return self.read_file(fp, filename)' \
-  '    configparser.SafeConfigParser = SafeConfigParser' \
-  &gt; /opt/conda/lib/python3.12/site-packages/sitecustomize.py
-
-# Model API builds need the image to end on the non-root user
-USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
-        </li>
-        <li>
-          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Make it the project's default environment.</b> In the project, open Settings and choose <code>Fraud-Detection-Workshop</code> as the compute environment.</span></label>
-        </li>
-        <li>
-          <label class="t"><input type="checkbox" id="c-1-5"><span><b>Check the environment from a workspace terminal.</b> Every line under "Required" must say <code>ok</code>.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-8"><span><b>Check the environment from the workspace terminal.</b> Every line under "Required" must say <code>ok</code>.</span></label>
           <div class="code"><pre><code>python .setup/verify_environment.py</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-6"><span><b>Sync your workspace files to the project.</b> Use the workspace's sync control to commit all changes.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-9"><span><b>Sync your workspace files to the project.</b> Use the workspace's sync control to commit all changes.</span></label>
           <div class="sub"><p>A Domino Job runs the files saved in the project, not the files sitting in an open workspace. If you skip this, the Job in step 2 cannot find <code>exercises/</code>.</p></div>
         </li>
       </ul>
@@ -521,7 +507,7 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
           <div class="sub"><p>The token is not shown on the Overview page. Open the endpoint's <b>Settings</b>, then the <b>Invocation</b> tab, and generate an access token. Copy it as soon as it appears. A name such as <code>workshop-app</code> helps you recognize it later.</p><p>The token is used as both the username and the password (HTTP basic authentication). The gear button next to a token revokes or regenerates it.</p></div>
         </li>
       </ul>
-      <div class="callout warn"><b>If the endpoint never starts</b><p>Open its logs. If you see <code>no app loaded. GAME OVER</code> together with <code>configparser.SafeConfigParser</code>, the environment was built without the last block of the Dockerfile in step 1. Add it, rebuild the environment, and publish the endpoint again.</p></div>
+      <div class="callout warn"><b>If the endpoint never starts</b><p>Open its logs. If you see <code>no app loaded. GAME OVER</code> together with <code>configparser.SafeConfigParser</code>, the environment was built without the last block of its Dockerfile instructions. Ask your administrator to add it (admin setup guide, step 1), rebuild the environment, and publish the endpoint again.</p></div>
     </section>
 
     <!-- ============ STEP 7 ============ -->
@@ -591,15 +577,12 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
         </table>
       </div>
       <div class="callout ok"><b>Model provenance</b><p>Both models are IBM Granite 3.3 (IBM is a US company), released under the Apache 2.0 license and not gated, so they can be mirrored into an air-gapped registry. Models from China-based labs were deliberately excluded for DoD-sensitive deployments. Quality is somewhat lower than the best open models. Confirm with your own approval process before using any model in a DoD environment, since this guide does not certify a model as approved.</p></div>
-      <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU. On a card with 40 GB or more (for example an L40S 48 GB) the generator runs in full precision. On a 24 GB card <code>serve_llms.sh</code> detects the size and loads the generator in 8-bit (FP8) so both models fit, at a small cost in quality. Ask your administrator which GPU hardware tier your deployment offers; GPU tiers can sit in <b>Pending</b> for a long time if the cluster has no free GPU node.</p></div>
+      <div class="callout warn"><b>GPU size</b><p>Both models run on one GPU. On a card with 40 GB or more (for example an L40S 48 GB) the generator runs in full precision. On a 24 GB card <code>serve_llms.sh</code> detects the size and loads the generator in 8-bit (FP8) so both models fit, at a small cost in quality. Your administrator provides the GPU hardware tier; GPU tiers can sit in <b>Pending</b> for a long time if the cluster has no free GPU node.</p></div>
 
-      <h3>9a. Create the GPU environment</h3>
+      <h3>9a. Choose the GPU environment</h3>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Create a second environment named <code>Fraud-Detection-LLM</code>.</b> Base it on your <code>Fraud-Detection-Workshop</code> environment (so it already has the step 1 packages), paste the block below into its Dockerfile instructions, and build it. The build downloads several GB, so allow about 10 minutes.</span></label>
-          <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
-RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
-USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
+          <label class="t"><input type="checkbox" id="c-9-1"><span><b>Confirm <code>Fraud-Detection-LLM</code> and a GPU hardware tier are available to you.</b> Your administrator builds the environment (it adds vLLM, transformers and PEFT on top of the workshop environment) and provides the GPU tier. Both appear in the pickers when you start a Job or edit the app. If either is missing, see the <a href="admin-setup-guide.html">admin setup guide</a>.</span></label>
         </li>
       </ul>
 
@@ -656,6 +639,52 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
       </ul>
     </section>
 
+    <!-- ============ STEP 11 ============ -->
+    <section class="step" id="s11">
+      <div class="step-h"><span class="num">11</span><h2>Use a code assistant <span class="pill">optional</span></h2></div>
+      <p class="goal">Work on the project's code with an AI assistant inside a VS Code workspace. You can use <b>Cline</b> or <b>Codex</b>. Both already know how to talk to Domino, and you bring your own API key. Your administrator sets up the environment (<a href="admin-setup-guide.html#a4">admin setup guide, step 4</a>).</p>
+
+      <h3>11a. Open a VS Code workspace</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-1"><span><b>Launch a workspace with VS Code.</b> In the project, choose Workspaces, then Create New Workspace. Pick the <code>Fraud-Detection-CodeAssist</code> environment, <b>VS Code</b> as the IDE, and the smallest hardware tier that fits, since smaller tiers start faster. If the project asks about Home Directory Persistence, turn it on. Then choose Launch.</span></label>
+          <div class="sub"><p>The workspace opens in a new browser tab, so allow pop-ups from Domino. If VS Code is not offered, the environment you chose does not include it.</p></div>
+        </li>
+      </ul>
+
+      <h3>11b. Connect an assistant</h3>
+      <p>Set up one of the two. Do not paste an API key into a chat or commit it to a file.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-2"><span><b>Cline:</b> open the Cline panel and choose <b>Bring my own API key</b>. For OpenAI, pick the <b>OpenAI</b> provider and paste your key. For a company gateway, pick <b>OpenAI Compatible</b> and enter the base URL, key and model id your administrator gave you. Choose a model and a reasoning effort, then choose Continue.</span></label>
+          <div class="sub"><p>Cline's Domino skills and its <code>domino_server</code> connection are already in place. Under Cline's MCP Servers, <code>domino_server</code> should show as connected, and the first start can take a moment.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-3"><span><b>Codex:</b> open a terminal in VS Code (Terminal, then New Terminal) and run the command below. Choose <b>Sign in with Device Code</b>, open the address it shows, and enter the code. Then refresh the browser tab and open the Codex tab in the sidebar.</span></label>
+          <div class="code"><pre><code>codex</code></pre><button class="copy" type="button">Copy</button></div>
+          <div class="sub"><p>Sign in through the terminal first, because the extension does nothing until you do. Codex already has the Domino skills.</p></div>
+        </li>
+      </ul>
+
+      <h3>11c. Try it on this project</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-4"><span><b>Check it can see Domino.</b> Ask your assistant the question below. Cline should list your clusters and check API access, and Codex should report which Domino user you are connected as.</span></label>
+          <div class="code"><pre><code>Which Domino user am I connected as, and can you reach the Domino API?</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-5"><span><b>Ask it to explain the workshop code.</b> This one is safe because it only reads.</span></label>
+          <div class="code"><pre><code>Read exercises/c_TrainingAndEvaluation/trainer_xgb.py and explain, step by step, what it logs to MLflow.</code></pre><button class="copy" type="button">Copy</button></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-6"><span><b>Ask it for a small change, and read the result before you accept it.</b> For example, in the Agent tab code.</span></label>
+          <div class="code"><pre><code>In exercises/f_OpenModelAgents/agent_tab.py, add a download button that saves the flagged transactions as a CSV.</code></pre><button class="copy" type="button">Copy</button></div>
+          <div class="sub"><p>Sync your files afterwards if you want a Job or the app to pick up the change.</p></div>
+        </li>
+      </ul>
+      <div class="callout warn"><b>If something is missing</b><p>No Cline icon or no Domino skills, or no <code>domino_server</code>: restart the workspace, then tell your administrator. If your assistant cannot reach its model, check the base URL and key you entered, or ask your administrator whether the route out of the workspace is open. If Codex does nothing, sign in through the terminal first.</p></div>
+    </section>
+
     <!-- ============ HELP ============ -->
     <section class="step" id="help">
       <div class="step-h"><h2>If something fails</h2></div>
@@ -666,8 +695,8 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
             <tr><td>Job fails with <code>FileNotFoundError</code> for <code>transformed_cc_transactions.csv</code> or <code>clean_cc_transactions.csv</code></td><td>The data steps did not finish</td><td>Repeat step 2a, then 2b, and confirm both files are in the dataset</td></tr>
             <tr><td>Job cannot find <code>exercises/...</code></td><td>Workspace files were never synced to the project</td><td>Sync in the workspace, then start the Job again</td></tr>
             <tr><td><code>No module named 'streamlit'</code></td><td>Running on the standard environment</td><td>Select the workshop environment on the Job, app or project</td></tr>
-            <tr><td><code>No module named 'pkg_resources'</code> when the EDA report runs</td><td>The environment was built without the <code>setuptools&lt;81</code> pin</td><td>Use the pip line from step 1 and rebuild</td></tr>
-            <tr><td>Endpoint logs show <code>no app loaded. GAME OVER</code></td><td>Missing Python 3.12 fix in the environment</td><td>Add the last Dockerfile block from step 1, rebuild, republish</td></tr>
+            <tr><td><code>No module named 'pkg_resources'</code> when the EDA report runs</td><td>The environment was built without the <code>setuptools&lt;81</code> pin</td><td>Ask your administrator to use the pip line from step 1 of the admin setup guide and rebuild</td></tr>
+            <tr><td>Endpoint logs show <code>no app loaded. GAME OVER</code></td><td>Missing Python 3.12 fix in the environment</td><td>Ask your administrator to add the last Dockerfile block (admin setup guide, step 1), rebuild, republish</td></tr>
             <tr><td>App shows "Classifier Connection Error: Invalid URL 'None'"</td><td>The endpoint variables are not set, or are misspelled</td><td>Check both names in project Settings, then restart the app</td></tr>
             <tr><td>App shows "Classifier API Error: 401"</td><td>Wrong token</td><td>Copy the token again; it is used for both username and password</td></tr>
             <tr><td>Agent tab says "Could not reach the generator model"</td><td>The GPU servers are not up yet, or the app is on a CPU tier or the wrong environment</td><td>Check the app is on the GPU tier with <code>Fraud-Detection-LLM</code>; wait for the 7B download, and read <code>/tmp/llm-logs/generator.log</code> in the app logs</td></tr>
