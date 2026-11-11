@@ -1,0 +1,15 @@
+# Agent Configuration
+# Used with DominoRun(agent_config_path="config.yaml")
+
+models:
+  primary: claude-sonnet-5
+  fallback: claude-haiku-4-5-20251001
+
+agents:
+  fraud_investigation_agent:
+    temperature: 0.4
+    max_tokens: 1000
+
+settings:
+  retry_count: 3
+  timeout_seconds: 30

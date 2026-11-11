@@ -608,7 +608,7 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
       <p class="goal">Prove the environments work from a normal project before participants arrive, then tell them what to expect.</p>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="a-6-1"><span><b>Do a dry run in a throwaway project.</b> Follow step 1 of the <a href="fraud-workshop-guide.html">workshop guide</a> as a participant would, selecting <code>Fraud-Detection-Workshop</code> in project Settings.</span></label>
+          <label class="t"><input type="checkbox" id="a-6-1"><span><b>Do a dry run in a throwaway project.</b> Follow step 1 of the <a href="fraud-workshop-guide.html">workshop guide</a> as a participant would (both the Git and the Domino-hosted option), selecting <code>Fraud-Detection-Workshop</code> in project Settings.</span></label>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-6-2"><span><b>Run the environment check</b> from a workspace terminal. Every line under "Required" must say <code>ok</code>.</span></label>
@@ -621,6 +621,10 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
         <li>
           <label class="t"><input type="checkbox" id="a-6-5"><span><b>If you built the code assistant environment (step 4), test it.</b> Start a VS Code workspace with <code>Fraud-Detection-CodeAssist</code>. Confirm the Cline icon is in the sidebar, <code>ls ~/.cline/skills</code> lists the Domino skills, and <code>domino_server</code> shows connected under Cline's MCP Servers. Then ask Cline to list your Domino clusters.</span></label>
           <div class="sub"><p>If the extension or skills are missing, read the workspace's startup log for the Pre Run Script, then check the file locations marked "confirm" in step 4.</p></div>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="a-6-6"><span><b>If participants will use the Git option, check Git access.</b> The workshop code is on GitHub at <code>github.com/DDL-Mike-Snyder/fraud-workshop</code>, and participants fork it. Confirm the Domino control plane can reach <code>github.com</code>, that users may create Git-based projects, and that a user can add a GitHub credential in Account Settings. In your dry run, create a Git-based project from a fork and run <code>.setup/unzip_dataset.ipynb</code>.</span></label>
+          <div class="sub"><p>If GitHub is blocked, participants use the Domino-hosted option with the zip files instead. You can also copy the repository to an internal Git server and give participants that URL.</p></div>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-6-4"><span><b>Send participants what they need:</b> the workshop guide, <code>fraud-workshop-code.zip</code> and <code>fraud-workshop-data.zip</code> from the <code>support/</code> folder, and the names of the hardware tiers to choose.</span></label>

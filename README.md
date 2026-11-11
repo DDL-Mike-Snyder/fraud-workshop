@@ -1,17 +1,40 @@
 # Fraud detection workshop
 
-Step-by-step instructions for the Domino fraud-detection workshop: prepare the data, run the
-model as a Job, inspect the results in Experiments, register the model, publish an endpoint and
-deploy the Streamlit app. Steps 9-10 add two open-model agents on a GPU (a chat agent that
-simulates transactions and a LoRA fine-tuned fraud scorer) in a second **Agent** tab.
+A hands-on Domino workshop. Train a credit card fraud model as a Domino Job, inspect and register it,
+publish it as a REST endpoint, then put a Streamlit app in front of it. Optional steps add two open-model
+agents on a GPU (a chat agent that simulates transactions and a LoRA fine-tuned fraud scorer) and a code
+assistant. This repository is the whole project: the guides, the code and the data.
 
-- `fraud-workshop-guide.html`: the workshop guide. Open it in a browser. Also published as a
-  private Claude artifact: https://claude.ai/artifact/AmfQRdGuyB4uTA4zgwUNqb
-- `admin-setup-guide.html`: one-time setup for Domino administrators (compute environments and hardware
-  tiers in the Admin panel). Do this before the workshop; participants then only select those resources.
-- `support/`: zip files that support the modeling exercise (`fraud-workshop-data.zip`,
-  `fraud-workshop-code.zip`).
+## Start here
 
-The code zip now includes `exercises/f_OpenModelAgents/` (fine-tuning Job, vLLM launcher, both agents, the Agent tab),
-`.setup/Dockerfile.llm` (GPU environment) and a Trad ML / Agent tabbed `app.py`. `app.sh` is unchanged apart from one line
-that starts the model servers.
+- **Participants:** open `fraud-workshop-guide.html` in a browser and follow it. Step 1 shows two ways to get
+  the code into a Domino project: fork this repository and create a Git-based project (recommended), or
+  upload `support/fraud-workshop-code.zip` into a Domino-hosted project.
+- **Administrators:** do `admin-setup-guide.html` once beforehand (compute environments, hardware tiers,
+  optional code assistant environment and Oracle GPU notes).
+
+## What is in this repository
+
+| Path | What it is |
+| --- | --- |
+| `fraud-workshop-guide.html` | The workshop guide for participants |
+| `admin-setup-guide.html` | One-time setup for Domino administrators |
+| `exercises/` | The exercises: `a_DataExploration` to `f_OpenModelAgents`, with their instructions |
+| `.setup/` | Environment files and `unzip_dataset.ipynb`, which puts the raw data in the Domino Dataset |
+| `app.sh`, `domino_short_id.py`, `pyproject.toml`, `run.sh` | Project files that Domino jobs and the app use |
+| `support/fraud-workshop-data.zip` | The raw transactions (78,324 rows) |
+| `support/fraud-workshop-code.zip` | The same code as a zip, for the upload option |
+| `support/build_zips.sh` | Rebuilds the code zip from this repository |
+
+Also published as a private Claude artifact: https://claude.ai/artifact/AmfQRdGuyB4uTA4zgwUNqb
+
+## Keeping the zip in step
+
+The code zip is generated from the files in this repository, so edit the files, not the zip. After any
+change to the code, run `bash support/build_zips.sh` and commit the new zip with it.
+
+## Using Git in Domino
+
+A Git-based project reads its code from your fork, but its Domino Dataset is separate and starts empty.
+Run `.setup/unzip_dataset.ipynb` once to copy the data from `support/`
+into the dataset. After you change a file, commit and push so Jobs and the app pick it up.

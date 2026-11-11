@@ -324,7 +324,7 @@
       <table>
         <thead><tr><th class="num">Step</th><th>You do</th><th>You end up with</th></tr></thead>
         <tbody>
-          <tr><td class="num">1</td><td>Create a project, add the code and data, pick the environment, sync your files</td><td>A project that can run every later step</td></tr>
+          <tr><td class="num">1</td><td>Create a project from Git or a zip, add the data, pick the environment</td><td>A project that can run every later step</td></tr>
           <tr><td class="num">2</td><td>Run a notebook, then a Job</td><td><code>clean_cc_transactions.csv</code> and <code>transformed_cc_transactions.csv</code></td></tr>
           <tr><td class="num">3</td><td>Run the XGBoost training script as a Job</td><td>A tracked experiment run with metrics, plots and a model</td></tr>
           <tr><td class="num">4</td><td>Read the Job output and the Experiments page</td><td>A view of how good the model is</td></tr>
@@ -342,40 +342,63 @@
     <!-- ============ STEP 1 ============ -->
     <section class="step" id="s1">
       <div class="step-h"><span class="num">1</span><h2>Get the project ready</h2></div>
-      <p class="goal">Create your project, put the code and the raw data in it, and select the workshop environment. Your administrator has already built the compute environments and hardware tiers (see the <a href="admin-setup-guide.html">admin setup guide</a>), so you only pick them.</p>
+      <p class="goal">Create your project, get the code and the raw data into it, and select the workshop environment. Your administrator has already built the compute environments and hardware tiers (see the <a href="admin-setup-guide.html">admin setup guide</a>), so you only pick them. You can bring the code in from <b>Git</b> (recommended) or by uploading a zip into a <b>Domino-hosted</b> project. Both end in the same place.</p>
 
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Option</th><th>Code comes from</th><th>Choose it when</th></tr></thead>
+          <tbody>
+            <tr><td><b>A. Git</b></td><td>Your own fork of the workshop repository on GitHub, <code>github.com/DDL-Mike-Snyder/fraud-workshop</code></td><td>You have a GitHub account and Domino can reach GitHub. Nothing to unzip, and your changes can be committed.</td></tr>
+            <tr><td><b>B. Domino-hosted</b></td><td>A code zip that you upload and unzip</td><td>No GitHub access, or you were handed the zip files directly.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>1a. Create the project</h3>
+      <p><b>Option A: Git.</b> Do both tasks, then skip option B.</p>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-1-1"><span><b>Create a project.</b> Open Projects, choose New Project, give it a name and keep the defaults, so the project is hosted in Domino.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-1"><span><b>Fork the repository.</b> On GitHub, open the workshop repository, choose Fork, and create the fork in your own account. If your instructor gave you a different repository URL, use that one.</span></label>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-2"><span><b>Select the workshop environment.</b> In the project, open Settings and choose <code>Fraud-Detection-Workshop</code> as the compute environment.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-2"><span><b>Create a Git-based project in Domino.</b> Open Projects, choose New Project, name it, and choose a Git repository as where the code lives. Paste your fork's HTTPS URL, pick the <code>main</code> branch, and create the project.</span></label>
+          <div class="sub"><p>Domino needs a GitHub credential to read your fork. If it asks, open Account Settings, add a Git credential with a GitHub personal access token that can read the repository, and try again.</p></div>
+        </li>
+      </ul>
+      <p><b>Option B: Domino-hosted.</b> Do both tasks, then skip option A.</p>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-3"><span><b>Create a project.</b> Open Projects, choose New Project, give it a name and keep the defaults, so the project is hosted in Domino.</span></label>
+        </li>
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Upload the code zip.</b> Open the project's Code page and upload <code>fraud-workshop-code.zip</code> to the project root. You will unzip it below.</span></label>
+        </li>
+      </ul>
+
+      <h3>1b. Set it up (both options)</h3>
+      <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-1-5"><span><b>Select the workshop environment.</b> In the project, open Settings and choose <code>Fraud-Detection-Workshop</code> as the compute environment.</span></label>
           <div class="sub"><p>If it is not in the list, ask your administrator to check that it is built and visible to you.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-3"><span><b>Upload the code zip.</b> Open the project's Code page and upload <code>fraud-workshop-code.zip</code> to the project root.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-6"><span><b>Start a JupyterLab workspace</b> in the project, with the <code>Fraud-Detection-Workshop</code> environment, and open a terminal in the project root.</span></label>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-4"><span><b>Upload the data zip.</b> Open Data, then the project's default Domino Dataset (Domino creates it with the project), and upload <code>fraud-workshop-data.zip</code> at the top level, not in a subfolder.</span></label>
-        </li>
-        <li>
-          <label class="t"><input type="checkbox" id="c-1-5"><span><b>Start a JupyterLab workspace</b> in the project, with the <code>Fraud-Detection-Workshop</code> environment, and open a terminal in the project root.</span></label>
-        </li>
-        <li>
-          <label class="t"><input type="checkbox" id="c-1-6"><span><b>Unzip the code.</b> You should then see <code>exercises/</code>, <code>app.sh</code> and <code>.setup/</code> in the file browser.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-7"><span><b>Option B only: unzip the code.</b> You should then see <code>exercises/</code>, <code>app.sh</code> and <code>.setup/</code> in the file browser. With option A they are already there.</span></label>
           <div class="code"><pre><code>unzip -o fraud-workshop-code.zip</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-7"><span><b>Unzip the data.</b> Open <code>.setup/unzip_dataset.ipynb</code> and run it once. It extracts the data in place, so <code>raw_cc_transactions.csv.gz</code> ends up at the top level of the dataset.</span></label>
-          <div class="sub"><p>Inside workspaces and Jobs, the dataset appears at <code>/domino/datasets/local/&lt;your-project-name&gt;/</code>. Confirm the file is listed on the Data page before moving on.</p></div>
+          <label class="t"><input type="checkbox" id="c-1-8"><span><b>Put the raw data in the project's dataset.</b> Open <code>.setup/unzip_dataset.ipynb</code> and run it once. It extracts <code>raw_cc_transactions.csv.gz</code> to the top level of the dataset. With option A it reads the data zip that came with your code in <code>support/</code>. With option B, first open Data, then the project's default Domino Dataset, and upload <code>fraud-workshop-data.zip</code> at the top level, then run the notebook.</span></label>
+          <div class="sub"><p>Inside workspaces and Jobs, the dataset appears at <code>/domino/datasets/local/&lt;your-project-name&gt;/</code> for a Domino-hosted project, and at <code>/domino/datasets/&lt;your-project-name&gt;/&lt;your-username&gt;/</code> for a Git-based one. The scripts work this out for you. Confirm the file is listed on the Data page before moving on.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-8"><span><b>Check the environment from the workspace terminal.</b> Every line under "Required" must say <code>ok</code>.</span></label>
+          <label class="t"><input type="checkbox" id="c-1-9"><span><b>Check the environment from the workspace terminal.</b> Every line under "Required" must say <code>ok</code>.</span></label>
           <div class="code"><pre><code>python .setup/verify_environment.py</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-1-9"><span><b>Sync your workspace files to the project.</b> Use the workspace's sync control to commit all changes.</span></label>
-          <div class="sub"><p>A Domino Job runs the files saved in the project, not the files sitting in an open workspace. If you skip this, the Job in step 2 cannot find <code>exercises/</code>.</p></div>
+          <label class="t"><input type="checkbox" id="c-1-10"><span><b>Option B only: sync your workspace files to the project.</b> Use the workspace's sync control to commit all changes.</span></label>
+          <div class="sub"><p>A Domino Job runs the files saved in the project, not the files sitting in an open workspace. If you skip this, the Job in step 2 cannot find <code>exercises/</code>. With option A the code is already in the repository, so there is nothing to sync until you change a file. After a change, commit and push it so Jobs and the app see it.</p></div>
         </li>
       </ul>
     </section>
@@ -589,8 +612,8 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
       <h3>9b. Fine-tune the fraud model</h3>
       <ul class="tasks">
         <li>
-          <label class="t"><input type="checkbox" id="c-9-2"><span><b>Upload the new code and sync.</b> The updated code zip adds <code>exercises/f_OpenModelAgents/</code>, a new <code>app.sh</code> line and a Trad ML tab module. Unzip it in a workspace terminal as in step 1, then sync your files.</span></label>
-          <div class="code"><pre><code>unzip -o fraud-workshop-code.zip</code></pre><button class="copy" type="button">Copy</button></div>
+          <label class="t"><input type="checkbox" id="c-9-2"><span><b>Make sure you have the open-model code.</b> It lives in <code>exercises/f_OpenModelAgents/</code> and is part of the current code. With option A, pull the latest from your fork if you forked before it was added (on GitHub, choose Sync fork, then pull in the workspace). With option B, upload and unzip the latest code zip as in step 1, then sync your files.</span></label>
+          <div class="code"><pre><code>git pull</code></pre><button class="copy" type="button">Copy</button></div>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="c-9-3"><span><b>Run the fine-tuning Job.</b> Choose Run Job, the <code>Fraud-Detection-LLM</code> environment and your GPU hardware tier, and enter this command.</span></label>
