@@ -355,7 +355,7 @@
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-1-2"><span><b>Name it and choose a base.</b> Name it exactly <code>Fraud-Detection-Workshop</code> and start from the Domino Standard Environment for Python 3.12.</span></label>
-          <div class="sub"><p>Participants select it by this name, and the guide refers to it by this name, so do not change the spelling. The same Dockerfile instructions are saved in <code>admin/environments/Dockerfile</code> in the repository, with a longer explanation in <code>admin/environments/environment.md</code>.</p></div>
+          <div class="sub"><p>Participants select it by this name, and the guide refers to it by this name, so do not change the spelling.</p></div>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-1-3"><span><b>Make it visible to participants.</b> Set its visibility so every workshop user can pick it (a global environment, or one shared with the workshop users or organization).</span></label>
@@ -405,7 +405,7 @@ USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
           <label class="t"><input type="checkbox" id="a-2-1"><span><b>Create a new environment named exactly <code>Fraud-Detection-LLM</code>.</b> Use <code>Fraud-Detection-Workshop</code> as its base environment, and give it the same visibility as in step 1.</span></label>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="a-2-2"><span><b>Paste this into its Dockerfile instructions and build it.</b> The build downloads several GB, so allow about 10 minutes. The same text is in <code>admin/environments/Dockerfile.llm</code>.</span></label>
+          <label class="t"><input type="checkbox" id="a-2-2"><span><b>Paste this into its Dockerfile instructions and build it.</b> The build downloads several GB, so allow about 10 minutes.</span></label>
                     <div class="code"><span class="lbl">Dockerfile instructions</span><pre><code>USER root
 RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
 USER ubuntu</code></pre><button class="copy" type="button">Copy</button></div>
@@ -641,7 +641,7 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
           <div class="sub"><p>If the extension or skills are missing, read the workspace's startup log for the Pre Run Script, then check the file locations marked "confirm" in step 4.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="a-6-6"><span><b>If participants will use the Git option, check Git access.</b> The workshop code is on GitHub at <code>github.com/DDL-Mike-Snyder/fraud-workshop</code>, and participants fork it. Confirm the Domino control plane can reach <code>github.com</code>, that users may create Git-based projects, and that a user can add a GitHub credential in Account Settings. In your dry run, create a Git-based project from a fork and run <code>.setup/unzip_dataset.ipynb</code>.</span></label>
+          <label class="t"><input type="checkbox" id="a-6-6"><span><b>If participants will use the Git option, check Git access.</b> The workshop code is on GitHub at <code>github.com/DDL-Mike-Snyder/fraud-workshop</code>, and participants fork it. Confirm the Domino control plane can reach <code>github.com</code>, that users may create Git-based projects, and that a user can add a GitHub credential in Account Settings. In your dry run, create a Git-based project from a fork, unzip the code zip from <code>user/downloads/</code>, and run <code>.setup/unzip_dataset.ipynb</code>.</span></label>
           <div class="sub"><p>If GitHub is blocked, participants use the Domino-hosted option with the zip files instead. You can also copy the repository to an internal Git server and give participants that URL.</p></div>
         </li>
         <li>

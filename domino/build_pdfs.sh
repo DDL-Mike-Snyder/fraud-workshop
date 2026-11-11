@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds user/fraud-workshop-guide.pdf and admin/admin-setup-guide.pdf from the HTML guides,
-# using headless Google Chrome. Run after editing a guide: bash tools/build_pdfs.sh
+# using headless Google Chrome. Run after editing a guide: bash domino/build_pdfs.sh
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"

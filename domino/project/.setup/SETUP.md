@@ -1,6 +1,6 @@
 # Fraud Detection Workshop Setup
 
-If you're working from a project created off the workshop Template, the Compute Environment is already attached and configured. Your administrator builds it, and the spec is in the workshop repository at `admin/environments/environment.md` (not part of the code zip). You shouldn't need to touch it to get started.
+The workshop guide (user/fraud-workshop-guide.html in the workshop repository) is the main set of instructions. This file is the original tester's checklist and the extra Flow notes. Your administrator builds the compute environment.
 
 The one thing that doesn't carry over automatically, even from a Template — Domino Datasets aren't copied along with it — is the raw data. Do the step below once for your project before running Exercise A.
 
@@ -53,7 +53,7 @@ Work through this once, in order — each exercise's output feeds the next.
 - [ ] Deploy a Model API endpoint from the registered XGBoost model. Copy its endpoint URL and auth token.
   If the endpoint never starts and the logs show `no app loaded. GAME OVER` with
   `configparser.SafeConfigParser`, the environment was built without the last
-  instruction in the environment's Dockerfile (`admin/environments/Dockerfile` in the workshop repository) - that line is what makes endpoints work on
+  instruction in the environment's Dockerfile instructions (admin guide, step 1) - that line is what makes endpoints work on
   Python 3.12.
 - [ ] Set `xgboost_endpoint` / `xgboost_auth` as environment variables (same pattern for `adaboost_*`/`gaussiannb_*` if you want all three selectable in the UI). Project → Settings → Environment Variables is the most reliable place — those apply project-wide to workspaces, jobs, and apps alike. Some Domino versions also offer a per-App environment variable screen; either works, since `app.py` just reads `os.environ.get(...)` regardless of which layer set it.
 - [ ] Publish `app.py` as a Domino App and submit a test transaction with the XGBoost model selected.

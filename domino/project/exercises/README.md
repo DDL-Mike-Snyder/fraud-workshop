@@ -2,7 +2,7 @@
 This workshop gives attendees hands-on experience with the Domino Data Lab platform by working through the complete model development and delivery lifecycle, from data preparation to model delivery.
 
 ## Setup
-Before starting, the raw transaction data must be in the project's Domino Dataset — see `.setup/SETUP.md`. Your administrator sets up the compute environment; its spec is in the workshop repository at `admin/environments/environment.md` (not part of the code zip).
+Before starting, the raw transaction data must be in the project's Domino Dataset. Run `.setup/unzip_dataset.ipynb` once to put it there. The workshop guide walks through this, and your administrator sets up the compute environment.
 
 ## Exercises
 Each exercise directory contains the instructions, notebooks, and scripts needed to complete it. Each builds on the previous one, so they must be completed in order.

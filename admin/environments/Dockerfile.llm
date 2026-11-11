@@ -1,5 +1,0 @@
-# Fraud-Detection-LLM environment: for the fine-tuning Job and the GPU app (workshop guide step 9).
-# In Domino, create it with Fraud-Detection-Workshop as the base environment, then paste:
-USER root
-RUN pip install --no-cache-dir vllm transformers peft accelerate openai scikit-learn
-USER ubuntu
