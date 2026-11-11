@@ -686,8 +686,16 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
       <div class="step-h"><span class="num">11</span><h2>Use a code assistant <span class="pill">optional</span></h2></div>
       <p class="goal">Work on the project's code with an AI assistant inside a VS Code workspace. You can use <b>Cline</b> or <b>Codex</b>. Both already know how to talk to Domino, and you bring your own API key. Your administrator sets up the environment (<a href="../admin/admin-setup-guide.html#a4">admin setup guide, step 4</a>).</p>
 
-      <h3>11a. Open a VS Code workspace</h3>
+      <h3>11a. Add your API key and open a VS Code workspace</h3>
       <ul class="tasks">
+        <li>
+          <label class="t"><input type="checkbox" id="c-11-7"><span><b>Add your API key as a project environment variable.</b> In the project, open Settings, then Environment variables, and add the one below. Use your own OpenAI API key as the value. Do this before you launch the workspace, because a workspace reads the variables when it starts.</span></label>
+          <div class="tablewrap" style="margin:10px 0 0 34px"><table>
+            <thead><tr><th>Name</th><th>Value</th></tr></thead>
+            <tbody><tr><td><code>OPENAI_API_KEY</code></td><td>Your OpenAI API key</td></tr></tbody>
+          </table></div>
+          <div class="sub"><p>Anyone who can open this project can see its environment variables, so use a key meant for the workshop and revoke it afterwards. If your organization gives you a gateway key instead, use that.</p></div>
+        </li>
         <li>
           <label class="t"><input type="checkbox" id="c-11-1"><span><b>Launch a workspace with VS Code.</b> In the project, choose Workspaces, then Create New Workspace. Pick the <code>Fraud-Detection-CodeAssist</code> environment, <b>VS Code</b> as the IDE, and the smallest hardware tier that fits, since smaller tiers start faster. If the project asks about Home Directory Persistence, turn it on. Then choose Launch.</span></label>
           <div class="sub"><p>The workspace opens in a new browser tab, so allow pop-ups from Domino. If VS Code is not offered, the environment you chose does not include it.</p></div>
@@ -702,9 +710,10 @@ python exercises/c_TrainingAndEvaluation/trainer_gnb.py</code></pre><button clas
           <div class="sub"><p>Cline's Domino skills and its <code>domino_server</code> connection are already in place. Under Cline's MCP Servers, <code>domino_server</code> should show as connected, and the first start can take a moment.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="c-11-3"><span><b>Codex:</b> open a terminal in VS Code (Terminal, then New Terminal) and run the command below. Choose <b>Sign in with Device Code</b>, open the address it shows, and enter the code. Then refresh the browser tab and open the Codex tab in the sidebar.</span></label>
-          <div class="code"><pre><code>codex</code></pre><button class="copy" type="button">Copy</button></div>
-          <div class="sub"><p>Sign in through the terminal first, because the extension does nothing until you do. Codex already has the Domino skills.</p></div>
+          <label class="t"><input type="checkbox" id="c-11-3"><span><b>Codex:</b> sign in to the Codex command line with your key. Open a terminal in the VS Code workspace (Terminal, then New Terminal), run the first command to log in, and the second to confirm. It reads the key from the variable you set, so you never paste it.</span></label>
+          <div class="code"><span class="lbl">Log in</span><pre><code>printenv OPENAI_API_KEY | codex login --with-api-key</code></pre><button class="copy" type="button">Copy</button></div>
+          <div class="code"><span class="lbl">Check</span><pre><code>codex login status</code></pre><button class="copy" type="button">Copy</button></div>
+          <div class="sub"><p>The check should say you are logged in with an API key. Then refresh the browser tab and open the Codex tab in the VS Code sidebar, or run <code>codex</code> in the terminal to chat with it there. Codex already has the Domino skills. If the login command prints nothing useful, run <code>echo ${OPENAI_API_KEY:+set}</code>: if that prints nothing, the variable was not set when the workspace started, so stop the workspace, check the variable in Settings, and launch again.</p></div>
         </li>
       </ul>
 

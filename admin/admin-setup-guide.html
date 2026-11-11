@@ -532,7 +532,7 @@ fi</code></pre><button class="copy" type="button">Copy</button></div>
           <div class="sub"><p>The Open VSX download and the GitHub clone are needed only at environment build time, not for participants.</p></div>
         </li>
         <li>
-          <label class="t"><input type="checkbox" id="a-4-10"><span><b>Decide where API keys come from.</b> Each participant brings their own key, or you issue keys from a gateway. Never put a key in the environment or the Dockerfile. Users can set it as a Domino user environment variable or enter it in the extension.</span></label>
+          <label class="t"><input type="checkbox" id="a-4-10"><span><b>Decide where API keys come from.</b> Each participant brings their own key, or you issue keys from a gateway. Never put a key in the environment or the Dockerfile. In the workshop, participants add it as a project environment variable named <code>OPENAI_API_KEY</code>, and log in to Codex from it with <code>printenv OPENAI_API_KEY | codex login --with-api-key</code>. They can also enter it in the Cline extension.</span></label>
         </li>
         <li>
           <label class="t"><input type="checkbox" id="a-4-11"><span><b>Optional: preset Codex for an internal gateway.</b> If everyone uses the same gateway, add this to the Pre Run Script so a first <code>~/.codex/config.toml</code> exists. Replace the values, and confirm the gateway supports the Responses API.</span></label>
