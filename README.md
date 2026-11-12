@@ -1,21 +1,19 @@
-# Fraud detection workshop
+# Fraud workshop resources
 
-A hands-on Domino workshop. Train a credit card fraud model as a Domino Job, inspect and register it, publish it
-as a REST endpoint, then put a Streamlit app in front of it. Optional steps add two open-model agents on a GPU and
-a code assistant.
+This repository only hosts the files that the Applied Domino Workshop downloads with `curl`. The workshop itself (guides,
+sign-in, and the source of these files) lives in the Applied Domino Workshop app and its repository.
 
-| You are | Go to | What is there |
-| --- | --- | --- |
-| **A Domino administrator** | [`admin/`](admin/) | The one-time setup guide (HTML and PDF). Do this first. |
-| **Taking the workshop** | [`user/`](user/) | The workshop guide (HTML and PDF) and the two zip files you work from |
-| **Maintaining this repository** | [`domino/`](domino/) | The workshop's code and the scripts that build the zip and the PDFs |
+| File | What it is |
+| --- | --- |
+| [`resources/start_here.ipynb`](resources/start_here.ipynb) | Run first in a Domino workspace. Downloads the two zips below into your project. |
+| [`resources/fraud-workshop-code.zip`](resources/fraud-workshop-code.zip) | Exercises, scripts, the Streamlit app and the environment check |
+| [`resources/fraud-workshop-data.zip`](resources/fraud-workshop-data.zip) | The raw credit card transactions (`raw_cc_transactions.csv.gz`) |
 
-The guides are meant to be read in a browser. If the HTML will not open, use the PDF next to it.
+From a Domino workspace terminal:
 
-Also published as a private Claude artifact: https://claude.ai/artifact/AmfQRdGuyB4uTA4zgwUNqb
+```
+curl -fSL -O https://raw.githubusercontent.com/DDL-Mike-Snyder/fraud-workshop/main/resources/start_here.ipynb
+```
 
-## Maintaining it
-
-- The code zip is built from `domino/project/`, so edit the files there, not the zip. After any change run
-  `bash domino/build_zips.sh` and commit the new zip.
-- After editing a guide, run `bash domino/build_pdfs.sh` (needs Google Chrome) and commit the PDFs.
+Do not edit these files here. They are generated and published from the workshop repository with
+`scripts/publish_resources.sh`. The previous contents of this repository are in its git history.
